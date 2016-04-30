@@ -3,15 +3,15 @@ package com.wj.bitmaploader.loader;/**
  */
 
 import android.graphics.Bitmap;
-import android.util.Log;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.wj.bitmaploader.asynctask.HandlerHelper;
 import com.wj.bitmaploader.listener.DisplayListener;
+import com.wj.bitmaploader.shape.DisplayShape;
 import com.wj.bitmaploader.utils.BitmapUtil;
 
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.FileNotFoundException;
 
 /**
  * User: WangJiang(https://github.com/WJRye)
@@ -40,78 +40,84 @@ public class BitmapLoader {
         imageView.setImageBitmap(bitmap);
     }
 
-    public void displayCircleBitmap(ImageView imageView, String path, int width, int height) {
-
-    }
-
-    public void displayRoundedBitmap(ImageView imageView, String path, int width, int height, int radius) {
-
-    }
-
-
-    public void displayChatLeftBitmap(ImageView imageView, String path, int width, int height, int radius) {
-
-    }
-
-    public void displayChatRightBitmap(ImageView imageView, String path, int width, int height, int radius) {
-
-    }
-
     public void displayBitmap(ImageView imageView, DisplayBitmapOptions options, DisplayListener listener) {
-        long start = System.currentTimeMillis();
         if (imageView == null || options == null) {
             throw new NullPointerException("ImageView or DisplayBitmapOptions is null!");
         }
-        int width = options.getWidth() <= 0 ? imageView.getWidth() : options.getWidth();
-        int height = options.getHeight() <= 0 ? imageView.getHeight() : options.getHeight();
+        int width = options.getWidth();
+        int height = options.getHeight();
         if (width <= 0 || height <= 0) {
             throw new IllegalArgumentException("Width or Height is illegal!");
         }
-        try {
-            Bitmap bitmap = null;
-            switch (options.getType()) {
-                case DisplayBitmapOptions.TYPE_DATA: {
-                    byte[] data = options.getData();
-                    if (data == null || data.length == 0) {
-                        if (listener != null)
-                            listener.onError("Data is null, or it's length is 0!");
-                        return;
-                    }
-                    bitmap = BitmapUtil.getDstBitmap(data, width, height);
-                    break;
+
+        new AsyncHandlerHelper(imageView, options, listener).execute();
+    }
+
+    private class AsyncHandlerHelper extends HandlerHelper<Void, Bitmap> {
+
+        private boolean error = false;
+
+        private ImageView imageView;
+        private DisplayBitmapOptions options;
+        private DisplayListener listener;
+
+        public AsyncHandlerHelper(ImageView imageView, DisplayBitmapOptions options, DisplayListener listener) {
+            super();
+            this.imageView = imageView;
+            this.options = options;
+            this.listener = listener;
+        }
+
+        @Override
+        protected Bitmap doInThread(Void... params) {
+            try {
+                switch (options.getType()) {
+                    case DisplayBitmapOptions.TYPE_DATA:
+                        return loadBitmap(BitmapUtil.getDstBitmap(options.getData(), options.getWidth(), options.getHeight()), options.getShape());
+                    case DisplayBitmapOptions.TYPE_PATH:
+                        return loadBitmap(BitmapUtil.getDstBitmap(options.getPath(), options.getWidth(), options.getHeight()), options.getShape());
+                    case DisplayBitmapOptions.TYPE_INPUT_STREAM:
+                        return loadBitmap(BitmapUtil.getDstBitmap(options.getInputStream(), options.getWidth(), options.getHeight()), options.getShape());
                 }
-                case DisplayBitmapOptions.TYPE_PATH: {
-                    String path = options.getPath();
-                    if (path == null || path.length() == 0) {
-                        if (listener != null)
-                            listener.onError("Path is null, or it's length is 0!");
-                        return;
-                    }
-                    bitmap = BitmapUtil.getDstBitmap(path, width, height);
-                    break;
-                }
-                case DisplayBitmapOptions.TYPE_INPUT_STREAM: {
-                    InputStream inputStream = options.getInputStream();
-                    if (inputStream == null) {
-                        if (listener != null) listener.onError("InputStream is null!");
-                        return;
-                    }
-                    bitmap = BitmapUtil.getDstBitmap(inputStream, width, height);
-                    break;
+            } catch (Exception e) {
+                error = true;
+                e.printStackTrace();
+            } catch (OutOfMemoryError e) {
+                error = true;
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostResult(Bitmap bitmap) {
+            if (error) {
+                if (listener != null) listener.onError(imageView);
+            } else {
+                if (bitmap != null) {
+                    display(imageView, bitmap, options.getWidth(), options.getHeight());
+                } else {
+                    if (listener != null) listener.onNull(imageView);
                 }
             }
-            if (bitmap == null) {
-                if (listener != null) listener.onNull(imageView);
-                return;
+        }
+
+        private Bitmap loadBitmap(Bitmap srcBitmap, DisplayShape shape) throws FileNotFoundException, OutOfMemoryError {
+            switch (shape.getShape()) {
+                case DisplayShape.RECT:
+                    break;
+                case DisplayShape.ROUND_RECT:
+                    return BitmapUtil.getRoundedBitmap(srcBitmap, shape.getRadius());
+                case DisplayShape.CIRCLE:
+                    return BitmapUtil.getCircleBitmap(srcBitmap);
+                case DisplayShape.CHAT_LEFT:
+                    return BitmapUtil.getChatLeftBitmap(srcBitmap, shape.getRadius());
+                case DisplayShape.CHAT_RIGHT:
+                    return BitmapUtil.getChatRightBitmap(srcBitmap, shape.getRadius());
+                default:
+                    break;
             }
-            Log.d(TAG, "time=" + (System.currentTimeMillis() - start));
-            display(imageView, bitmap, options.getWidth(), options.getHeight());
-        } catch (IOException e) {
-            e.printStackTrace();
-            if (listener != null) listener.onError(e.getMessage());
-        } catch (OutOfMemoryError e) {
-            e.printStackTrace();
-            if (listener != null) listener.onError(e.getMessage());
+            return srcBitmap;
         }
     }
 }

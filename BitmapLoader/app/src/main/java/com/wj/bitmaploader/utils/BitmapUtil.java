@@ -44,12 +44,18 @@ public final class BitmapUtil {
      * @param radius    圆角半径
      * @return 气泡圆角图片
      */
-    public static Bitmap drawChatRightBitmap(String imagePath, int dstWidth, int dstHeight, int radius) throws OutOfMemoryError, FileNotFoundException {
+    public static Bitmap getChatRightBitmap(String imagePath, int dstWidth, int dstHeight, int radius) throws OutOfMemoryError, FileNotFoundException {
 
         Bitmap srcBitmap = getDstBitmap(imagePath, dstWidth, dstHeight);
         if (srcBitmap == null) {
             return null;
         }
+
+        return getChatRightBitmap(srcBitmap, radius);
+    }
+
+    public static Bitmap getChatRightBitmap(Bitmap srcBitmap, int radius) throws OutOfMemoryError, FileNotFoundException {
+
         int width = srcBitmap.getWidth();
         int height = srcBitmap.getHeight();
 
@@ -73,19 +79,22 @@ public final class BitmapUtil {
     /**
      * 获得聊天左边显示的气泡图片
      *
-     * @param imagePath 图片路径
+     * @param imagePath      图片路径
      * @param dstWidth  目标宽度
      * @param dstHeight 目标高度
      * @param radius    圆角半径
      * @return 气泡圆角图片
      */
-    public static Bitmap drawChatLeftBitmap(String imagePath, int dstWidth, int dstHeight, int radius) throws OutOfMemoryError, FileNotFoundException {
-
+    public static Bitmap getChatLeftBitmap(String imagePath, int dstWidth, int dstHeight, int radius) throws OutOfMemoryError, FileNotFoundException {
         Bitmap srcBitmap = getDstBitmap(imagePath, dstWidth, dstHeight);
         if (srcBitmap == null) {
             return null;
         }
+        return getChatLeftBitmap(srcBitmap, radius);
 
+    }
+
+    public static Bitmap getChatLeftBitmap(Bitmap srcBitmap, int radius) throws OutOfMemoryError, FileNotFoundException {
         Path path = new Path();
         float xStart = 20f;
         float yStart = 50f;
@@ -101,6 +110,7 @@ public final class BitmapUtil {
         RectF rectF = new RectF(xStart, 0, srcBitmap.getWidth(), srcBitmap.getHeight());
 
         return drawChatBitmap(srcBitmap, path, rectF, radius);
+
     }
 
     private static Bitmap drawChatBitmap(Bitmap srcBitmap, Path path, RectF rectF, int radius) throws OutOfMemoryError {
@@ -148,15 +158,14 @@ public final class BitmapUtil {
     /**
      * 获得圆角图片
      *
-     * @param path      图片地址
+     * @param imagePath      图片地址
      * @param dstWidth  目标宽度
      * @param dstHeight 目标高度
      * @param r         圆角半径
      * @return 圆角bitmap
      */
-    public static Bitmap getRoundedBitmap(String path, int dstWidth, int dstHeight, int r) throws OutOfMemoryError, FileNotFoundException {
-        return getRoundedBitmap(getDstBitmap(path, dstWidth, dstHeight), r);
-
+    public static Bitmap getRoundedBitmap(String imagePath, int dstWidth, int dstHeight, int r) throws OutOfMemoryError, FileNotFoundException {
+        return getRoundedBitmap(getDstBitmap(imagePath, dstWidth, dstHeight), r);
     }
 
     /**
@@ -170,23 +179,21 @@ public final class BitmapUtil {
         if (srcBitmap == null) {
             return null;
         }
-        int width = srcBitmap.getWidth();
-        int height = srcBitmap.getHeight();
 
-        return drawRoundedBitmap(srcBitmap, width, height, r);
+        return drawRoundedBitmap(srcBitmap, srcBitmap.getWidth(), srcBitmap.getHeight(), r);
 
     }
 
     /**
      * 获得圆形图片
      *
-     * @param path      图片地址
+     * @param imagePath      图片地址
      * @param dstWidth  目标宽度
      * @param dstHeight 目标高度
      * @return 圆形bitmap
      */
-    public static Bitmap getCircleBitmap(String path, int dstWidth, int dstHeight) throws OutOfMemoryError, FileNotFoundException {
-        return getCircleBitmap(getDstBitmap(path, dstWidth, dstHeight));
+    public static Bitmap getCircleBitmap(String imagePath, int dstWidth, int dstHeight) throws OutOfMemoryError, FileNotFoundException {
+        return getCircleBitmap(getDstBitmap(imagePath, dstWidth, dstHeight));
     }
 
     /**
@@ -202,25 +209,26 @@ public final class BitmapUtil {
         int width = srcBitmap.getWidth();
         int height = srcBitmap.getHeight();
 
-        int max = Math.max(width, height);
-        srcBitmap = Bitmap.createScaledBitmap(srcBitmap, max, max, true);
-        int radius = max / 2;
+        int size = Math.max(width, height);
 
-        return drawRoundedBitmap(srcBitmap, 2 * radius, 2 * radius, radius);
+        return drawRoundedBitmap(Bitmap.createScaledBitmap(srcBitmap, size, size, true), size, size, size / 2);
     }
 
     /**
      * 压缩图片
      *
-     * @param path      图片路径
+     * @param imagePath      图片路径
      * @param dstWidth  目标宽度
      * @param dstHeight 目标高度
      * @return 压缩后的bitmap
      */
-    public static Bitmap getDstBitmap(String path, int dstWidth, int dstHeight) throws OutOfMemoryError, FileNotFoundException {
-        InputStream optInputStream = new BufferedInputStream(new FileInputStream(path));
-        InputStream srcInputStream = new BufferedInputStream(new FileInputStream(path));
-        int degree = readPictureDegree(path);
+    public static Bitmap getDstBitmap(String imagePath, int dstWidth, int dstHeight) throws FileNotFoundException, OutOfMemoryError {
+        if ((imagePath == null || imagePath.length() == 0) || dstWidth == 0 || dstHeight == 0)
+            throw new IllegalArgumentException();
+
+        InputStream optInputStream = new BufferedInputStream(new FileInputStream(imagePath));
+        InputStream srcInputStream = new BufferedInputStream(new FileInputStream(imagePath));
+        int degree = readPictureDegree(imagePath);
         return compress(optInputStream, srcInputStream, dstWidth, dstHeight, degree);
     }
 
@@ -233,6 +241,9 @@ public final class BitmapUtil {
      * @return 压缩后的bitmap
      */
     public static Bitmap getDstBitmap(byte[] data, int dstWidth, int dstHeight) throws OutOfMemoryError {
+        if ((data == null || data.length == 0) || dstWidth == 0 || dstHeight == 0)
+            throw new IllegalArgumentException();
+
         InputStream optInputStream = new ByteArrayInputStream(data);
         InputStream srcInputStream = new ByteArrayInputStream(data);
         return compress(optInputStream, srcInputStream, dstWidth, dstHeight, 0);
@@ -246,7 +257,10 @@ public final class BitmapUtil {
      * @param dstHeight   目标高度
      * @return 压缩后的bitmap
      */
-    public static Bitmap getDstBitmap(InputStream inputStream, int dstWidth, int dstHeight) throws OutOfMemoryError, IOException {
+    public static Bitmap getDstBitmap(InputStream inputStream, int dstWidth, int dstHeight) throws IOException, OutOfMemoryError {
+        if (inputStream == null || dstWidth == 0 || dstHeight == 0)
+            throw new IllegalArgumentException();
+
         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
         byte[] buffer = new byte[1024];
         int len = 0;

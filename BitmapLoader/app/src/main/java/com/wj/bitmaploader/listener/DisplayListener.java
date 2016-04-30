@@ -11,7 +11,7 @@ import android.widget.ImageView;
  */
 public interface DisplayListener {
 
-    void onError(String msg);
+    void onError(ImageView iv);
 
     void onNull(ImageView iv);
 

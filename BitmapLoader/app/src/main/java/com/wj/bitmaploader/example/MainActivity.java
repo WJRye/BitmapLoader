@@ -1,5 +1,6 @@
 package com.wj.bitmaploader.example;
 
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -11,12 +12,7 @@ import com.wj.bitmaploader.R;
 import com.wj.bitmaploader.listener.DisplayListener;
 import com.wj.bitmaploader.loader.BitmapLoader;
 import com.wj.bitmaploader.loader.DisplayBitmapOptions;
-
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
+import com.wj.bitmaploader.shape.CircleShape;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -32,27 +28,30 @@ public class MainActivity extends ActionBarActivity {
 
 //        BitmapLoader.getInstance().displayChatRightBitmap(iv, path, 480, 540, 20);
         try {
-            InputStream inputStream = new BufferedInputStream(new FileInputStream(new File(path)));
-            DisplayBitmapOptions options1 = new DisplayBitmapOptions.Builder(DisplayBitmapOptions.TYPE_INPUT_STREAM).width(480).height(640).inputStream(inputStream).create();
-            BitmapLoader.getInstance().displayBitmap(iv1, options1, new DisplayListener() {
+//            InputStream inputStream = new BufferedInputStream(new FileInputStream(new File(path)));
+//            DisplayBitmapOptions options1 = new DisplayBitmapOptions.Builder(DisplayBitmapOptions.TYPE_INPUT_STREAM).width(480).height(640).inputStream(inputStream).create();
+//            BitmapLoader.getInstance().displayBitmap(iv1, options1, new DisplayListener() {
+//
+//                @Override
+//                public void onError(ImageView iv, String msg) {
+//                    Log.d(TAG, "onError-->" + msg);
+//                }
+//
+//                @Override
+//                public void onNull(ImageView iv) {
+//                    Log.d(TAG, "onNull");
+//                }
+//            });
+            int width = Resources.getSystem().getDisplayMetrics().widthPixels;
+            int height = Resources.getSystem().getDisplayMetrics().heightPixels;
 
-                @Override
-                public void onError(String msg) {
-                    Log.d(TAG, "onError-->" + msg);
-                }
-
-                @Override
-                public void onNull(ImageView iv) {
-                    Log.d(TAG, "onNull");
-                }
-            });
-            DisplayBitmapOptions options = new DisplayBitmapOptions.Builder(DisplayBitmapOptions.TYPE_PATH).width(480).height(640).path(path).create();
+            DisplayBitmapOptions options = new DisplayBitmapOptions.Builder(DisplayBitmapOptions.TYPE_PATH).width(240).height(480).path(path).shape(new CircleShape()).build();
             BitmapLoader.getInstance().displayBitmap(iv2, options, new DisplayListener() {
 
 
                 @Override
-                public void onError(String msg) {
-                    Log.d(TAG, "onError-->" + msg);
+                public void onError(ImageView iv) {
+                    Log.d(TAG, "onError-->");
                 }
 
                 @Override
@@ -60,7 +59,7 @@ public class MainActivity extends ActionBarActivity {
                     Log.d(TAG, "onNull");
                 }
             });
-        } catch (FileNotFoundException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
