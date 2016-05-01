@@ -1,6 +1,8 @@
 package com.wj.bitmaploader.example;
 
 import android.content.res.Resources;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -13,6 +15,7 @@ import com.wj.bitmaploader.listener.DisplayListener;
 import com.wj.bitmaploader.loader.BitmapLoader;
 import com.wj.bitmaploader.loader.DisplayBitmapOptions;
 import com.wj.bitmaploader.shape.ChatShape;
+import com.wj.bitmaploader.shape.CircleShape;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -27,6 +30,7 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        getWindow().setBackgroundDrawable(new ColorDrawable(Color.GREEN));
         ImageView iv1 = (ImageView) findViewById(R.id.iv1);
         ImageView iv2 = (ImageView) findViewById(R.id.iv2);
         String path = "/mnt/sdcard/DCIM/Album/1460534123086.jpg";
@@ -34,7 +38,7 @@ public class MainActivity extends ActionBarActivity {
 //        BitmapLoader.getInstance().displayChatRightBitmap(iv, path, 480, 540, 20);
         try {
             InputStream inputStream = new BufferedInputStream(new FileInputStream(new File(path)));
-            DisplayBitmapOptions options1 = new DisplayBitmapOptions.Builder(DisplayBitmapOptions.TYPE_INPUT_STREAM).width(480).height(640).inputStream(inputStream).build();
+            DisplayBitmapOptions options1 = new DisplayBitmapOptions.Builder(DisplayBitmapOptions.TYPE_INPUT_STREAM).width(480).height(640).inputStream(inputStream).shape(new CircleShape(20, Color.BLUE)).build();
 
             BitmapLoader.getInstance().displayBitmap(iv1, options1, new DisplayListener() {
 
@@ -52,7 +56,7 @@ public class MainActivity extends ActionBarActivity {
             int height = Resources.getSystem().getDisplayMetrics().heightPixels;
 
             DisplayBitmapOptions options = new DisplayBitmapOptions.Builder(DisplayBitmapOptions.TYPE_PATH).width(240).height(480).path(path).shape(new ChatShape(ChatShape.RIGHT, 20)).build();
-            BitmapLoader.getInstance().displayBitmap(iv2, options, new DisplayListener() {
+            BitmapLoader.getInstance().displayBitmap(iv2, path, new DisplayListener() {
 
 
                 @Override

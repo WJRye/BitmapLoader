@@ -79,7 +79,7 @@ public final class BitmapUtil {
     /**
      * 获得聊天左边显示的气泡图片
      *
-     * @param imagePath      图片路径
+     * @param imagePath 图片路径
      * @param dstWidth  目标宽度
      * @param dstHeight 目标高度
      * @param radius    圆角半径
@@ -158,7 +158,7 @@ public final class BitmapUtil {
     /**
      * 获得圆角图片
      *
-     * @param imagePath      图片地址
+     * @param imagePath 图片地址
      * @param dstWidth  目标宽度
      * @param dstHeight 目标高度
      * @param r         圆角半径
@@ -187,7 +187,7 @@ public final class BitmapUtil {
     /**
      * 获得圆形图片
      *
-     * @param imagePath      图片地址
+     * @param imagePath 图片地址
      * @param dstWidth  目标宽度
      * @param dstHeight 目标高度
      * @return 圆形bitmap
@@ -206,18 +206,45 @@ public final class BitmapUtil {
         if (srcBitmap == null) {
             return null;
         }
-        int width = srcBitmap.getWidth();
-        int height = srcBitmap.getHeight();
-
-        int size = Math.max(width, height);
+        int size = Math.max(srcBitmap.getWidth(), srcBitmap.getHeight());
 
         return drawRoundedBitmap(Bitmap.createScaledBitmap(srcBitmap, size, size, true), size, size, size / 2);
+    }
+
+    public static Bitmap getCircleBitmapWithBorder(Bitmap srcBitmap, int borderWidth, int borderColor) throws OutOfMemoryError {
+
+        int size = Math.max(srcBitmap.getWidth(), srcBitmap.getHeight());
+        Bitmap desBitmap = drawRoundedBitmap(Bitmap.createScaledBitmap(srcBitmap, size, size, true), size, size, size / 2);
+        Bitmap drawBitmap = desBitmap.copy(Bitmap.Config.ARGB_4444, true);
+
+        Canvas canvas = new Canvas(desBitmap);
+        canvas.drawColor(Color.WHITE, PorterDuff.Mode.CLEAR);
+        //抗锯齿
+        canvas.setDrawFilter(new PaintFlagsDrawFilter(0, Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG));
+
+        Paint bmPaint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.DITHER_FLAG);
+        bmPaint.setStyle(Paint.Style.FILL);
+        bmPaint.setColor(Color.WHITE);
+        RectF oval = new RectF(borderWidth, borderWidth, size - borderWidth, size - borderWidth);
+        canvas.drawBitmap(drawBitmap, null, oval, bmPaint);
+
+        Paint circlePaint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.DITHER_FLAG);
+        circlePaint.setStyle(Paint.Style.STROKE);
+        circlePaint.setStrokeWidth(borderWidth);
+        circlePaint.setColor(borderColor);
+        float circleRadius = size / 2 - borderWidth / 2;
+        canvas.drawCircle(size / 2, size / 2, circleRadius, circlePaint);
+
+        drawBitmap.recycle();
+        drawBitmap = null;
+
+        return desBitmap;
     }
 
     /**
      * 压缩图片
      *
-     * @param imagePath      图片路径
+     * @param imagePath 图片路径
      * @param dstWidth  目标宽度
      * @param dstHeight 目标高度
      * @return 压缩后的bitmap

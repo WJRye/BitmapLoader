@@ -4,12 +4,15 @@ package com.wj.bitmaploader.loader;/**
 
 import android.graphics.Bitmap;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 
 import com.wj.bitmaploader.asynctask.HandlerHelper;
 import com.wj.bitmaploader.listener.DisplayListener;
 import com.wj.bitmaploader.shape.ChatShape;
+import com.wj.bitmaploader.shape.CircleShape;
 import com.wj.bitmaploader.shape.DisplayShape;
+import com.wj.bitmaploader.shape.RectShape;
 import com.wj.bitmaploader.utils.BitmapUtil;
 
 import java.io.FileNotFoundException;
@@ -34,11 +37,24 @@ public final class BitmapLoader {
     }
 
     private void display(ImageView imageView, Bitmap bitmap, int width, int height) {
-        ViewGroup.LayoutParams params = imageView.getLayoutParams();
-        params.width = width;
-        params.height = height;
-        imageView.setLayoutParams(params);
+
+        if (!(width == imageView.getWidth() && height == imageView.getHeight())) {
+            ViewGroup.LayoutParams params = imageView.getLayoutParams();
+            params.width = width;
+            params.height = height;
+            imageView.setLayoutParams(params);
+        }
         imageView.setImageBitmap(bitmap);
+    }
+
+    public void displayBitmap(final ImageView imageView, final String imagePath, final DisplayListener listener) {
+        imageView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                DisplayBitmapOptions options = new DisplayBitmapOptions.Builder(DisplayBitmapOptions.TYPE_PATH).width(imageView.getWidth()).height(imageView.getHeight()).path(imagePath).shape(new RectShape()).build();
+                displayBitmap(imageView, options, listener);
+            }
+        });
     }
 
     public void displayBitmap(ImageView imageView, DisplayBitmapOptions options, DisplayListener listener) {
@@ -110,7 +126,12 @@ public final class BitmapLoader {
                 case DisplayShape.ROUND_RECT:
                     return BitmapUtil.getRoundedBitmap(srcBitmap, shape.getRadius());
                 case DisplayShape.CIRCLE:
-                    return BitmapUtil.getCircleBitmap(srcBitmap);
+                    CircleShape circleShape = (CircleShape) shape;
+                    if (circleShape.hasBorder()) {
+                        return BitmapUtil.getCircleBitmapWithBorder(srcBitmap, circleShape.getBorderWidth(), circleShape.getBorderColor());
+                    } else {
+                        return BitmapUtil.getCircleBitmap(srcBitmap);
+                    }
                 case DisplayShape.CHAT:
                     ChatShape chatShape = (ChatShape) shape;
                     if (chatShape.getOrientation() == ChatShape.LEFT) {
@@ -118,7 +139,6 @@ public final class BitmapLoader {
                     } else if (chatShape.getOrientation() == ChatShape.RIGHT) {
                         return BitmapUtil.getChatRightBitmap(srcBitmap, chatShape.getRadius());
                     }
-                    break;
                 default:
                     break;
             }

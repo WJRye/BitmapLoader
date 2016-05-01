@@ -8,7 +8,40 @@ package com.wj.bitmaploader.shape;/**
  * Time: 17:56
  */
 public class CircleShape extends DisplayShape {
+    private boolean hasBorder;
+    private int borderWidth;
+    private int borderColor;
+
     public CircleShape() {
-        super(CIRCLE,0);
+        this(false, 0, 0);
+    }
+
+    public CircleShape(int borderWidth, int borderColor) {
+        this(true, borderWidth, borderColor);
+    }
+
+    private CircleShape(boolean hasBorder, int borderWidth, int borderColor) {
+        super(CIRCLE, 0);
+        this.hasBorder = hasBorder;
+
+        if (hasBorder) {
+            if (borderWidth < 0) {
+                throw new IllegalArgumentException("borderWidth is <=0 !");
+            }
+            this.borderWidth = borderWidth;
+            this.borderColor = borderColor;
+        }
+    }
+
+    public boolean hasBorder() {
+        return hasBorder;
+    }
+
+    public int getBorderWidth() {
+        return borderWidth;
+    }
+
+    public int getBorderColor() {
+        return borderColor;
     }
 }
