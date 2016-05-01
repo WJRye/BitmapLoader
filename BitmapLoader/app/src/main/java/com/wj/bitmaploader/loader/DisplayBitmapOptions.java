@@ -3,6 +3,7 @@ package com.wj.bitmaploader.loader;/**
  */
 
 import com.wj.bitmaploader.shape.DisplayShape;
+import com.wj.bitmaploader.shape.RectShape;
 
 import java.io.InputStream;
 
@@ -11,7 +12,7 @@ import java.io.InputStream;
  * Date: 2016-04-27
  * Time: 10:44
  */
-public class DisplayBitmapOptions {
+public final class DisplayBitmapOptions {
     public static final int TYPE_DATA = 1;
     public static final int TYPE_PATH = 2;
     public static final int TYPE_INPUT_STREAM = 3;
@@ -28,7 +29,11 @@ public class DisplayBitmapOptions {
         this.width = builder.width;
         this.height = builder.height;
         this.type = builder.type;
-        this.shape = builder.shape;
+        if (builder.shape == null) {
+            this.shape = new RectShape();
+        } else {
+            this.shape = builder.shape;
+        }
         switch (type) {
             case TYPE_DATA:
                 this.data = builder.data;
@@ -116,32 +121,8 @@ public class DisplayBitmapOptions {
         return inputStream;
     }
 
-    public void setShape(DisplayShape shape) {
-        this.shape = shape;
-    }
-
     public DisplayShape getShape() {
         return shape;
-    }
-
-    public void setType(int type, Object object) {
-        this.type = type;
-        switch (type) {
-            case TYPE_DATA:
-                
-            case TYPE_PATH:
-                if (object instanceof String) {
-                    this.path = (String) object;
-                }
-                break;
-            case TYPE_INPUT_STREAM:
-                if (object instanceof InputStream) {
-                    this.inputStream = (InputStream) object;
-                }
-                break;
-            default:
-                break;
-        }
     }
 
 }

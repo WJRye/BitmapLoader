@@ -8,6 +8,7 @@ import android.widget.ImageView;
 
 import com.wj.bitmaploader.asynctask.HandlerHelper;
 import com.wj.bitmaploader.listener.DisplayListener;
+import com.wj.bitmaploader.shape.ChatShape;
 import com.wj.bitmaploader.shape.DisplayShape;
 import com.wj.bitmaploader.utils.BitmapUtil;
 
@@ -18,7 +19,7 @@ import java.io.FileNotFoundException;
  * Date: 2016-04-25
  * Time: 16:35
  */
-public class BitmapLoader {
+public final class BitmapLoader {
     private static final String TAG = "TAG";
 
     private BitmapLoader() {
@@ -110,10 +111,14 @@ public class BitmapLoader {
                     return BitmapUtil.getRoundedBitmap(srcBitmap, shape.getRadius());
                 case DisplayShape.CIRCLE:
                     return BitmapUtil.getCircleBitmap(srcBitmap);
-                case DisplayShape.CHAT_LEFT:
-                    return BitmapUtil.getChatLeftBitmap(srcBitmap, shape.getRadius());
-                case DisplayShape.CHAT_RIGHT:
-                    return BitmapUtil.getChatRightBitmap(srcBitmap, shape.getRadius());
+                case DisplayShape.CHAT:
+                    ChatShape chatShape = (ChatShape) shape;
+                    if (chatShape.getOrientation() == ChatShape.LEFT) {
+                        return BitmapUtil.getChatLeftBitmap(srcBitmap, chatShape.getRadius());
+                    } else if (chatShape.getOrientation() == ChatShape.RIGHT) {
+                        return BitmapUtil.getChatRightBitmap(srcBitmap, chatShape.getRadius());
+                    }
+                    break;
                 default:
                     break;
             }

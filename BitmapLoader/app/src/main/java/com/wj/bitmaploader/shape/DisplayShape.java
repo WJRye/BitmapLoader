@@ -12,8 +12,7 @@ public abstract class DisplayShape {
     public static final int RECT = 1;
     public static final int ROUND_RECT = 2;
     public static final int CIRCLE = 3;
-    public static final int CHAT_LEFT = 4;
-    public static final int CHAT_RIGHT = 5;
+    public static final int CHAT = 4;
     private int shape;
     private int radius;
 

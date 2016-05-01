@@ -8,11 +8,12 @@ package com.wj.bitmaploader.shape;/**
  * Time: 17:57
  */
 public class ChatShape extends DisplayShape {
-
+    public static final int LEFT = 1;
+    public static final int RIGHT = 2;
     private int orientation;
 
     public ChatShape(int orientation, int radius) {
-        super(orientation, radius);
+        super(CHAT, radius);
         this.orientation = orientation;
     }
 
