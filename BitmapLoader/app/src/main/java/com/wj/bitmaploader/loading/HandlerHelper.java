@@ -1,4 +1,4 @@
-package com.wj.bitmaploader.asynctask;/**
+package com.wj.bitmaploader.loading;/**
  * Created by wangjiang on 2016/4/27.
  */
 

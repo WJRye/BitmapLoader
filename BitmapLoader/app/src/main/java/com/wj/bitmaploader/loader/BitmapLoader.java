@@ -2,20 +2,15 @@ package com.wj.bitmaploader.loader;/**
  * Created by wangjiang on 2016/4/25.
  */
 
-import android.graphics.Bitmap;
+import android.support.v7.widget.RecyclerView;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 
-import com.wj.bitmaploader.asynctask.HandlerHelper;
+import com.wj.bitmaploader.helper.RecyclerViewHelper;
 import com.wj.bitmaploader.listener.DisplayListener;
-import com.wj.bitmaploader.shape.ChatShape;
-import com.wj.bitmaploader.shape.CircleShape;
-import com.wj.bitmaploader.shape.DisplayShape;
+import com.wj.bitmaploader.loading.SyncHandlerHelper;
 import com.wj.bitmaploader.shape.RectShape;
-import com.wj.bitmaploader.utils.BitmapUtil;
-
-import java.io.FileNotFoundException;
 
 /**
  * User: WangJiang(https://github.com/WJRye)
@@ -24,6 +19,7 @@ import java.io.FileNotFoundException;
  */
 public final class BitmapLoader {
     private static final String TAG = "TAG";
+    private RecyclerViewHelper mHelper;
 
     private BitmapLoader() {
     }
@@ -36,22 +32,22 @@ public final class BitmapLoader {
         return BitmapLoaderHolder.INSTANCE;
     }
 
-    private void display(ImageView imageView, Bitmap bitmap, int width, int height) {
-
-        if (!(width == imageView.getWidth() && height == imageView.getHeight())) {
-            ViewGroup.LayoutParams params = imageView.getLayoutParams();
-            params.width = width;
-            params.height = height;
-            imageView.setLayoutParams(params);
-        }
-        imageView.setImageBitmap(bitmap);
-    }
 
     public void displayBitmap(final ImageView imageView, final String imagePath, final DisplayListener listener) {
         imageView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
-                DisplayBitmapOptions options = new DisplayBitmapOptions.Builder(DisplayBitmapOptions.TYPE_PATH).width(imageView.getWidth()).height(imageView.getHeight()).path(imagePath).shape(new RectShape()).build();
+                DisplayBitmapOptions options = new DisplayBitmapOptions.Builder().width(imageView.getWidth()).height(imageView.getHeight()).path(imagePath).shape(new RectShape()).build();
+                displayBitmap(imageView, options, listener);
+            }
+        });
+    }
+
+    public void displayBitmap(final ImageView imageView, final byte[] data, final DisplayListener listener) {
+        imageView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                DisplayBitmapOptions options = new DisplayBitmapOptions.Builder().width(imageView.getWidth()).height(imageView.getHeight()).data(data).shape(new RectShape()).build();
                 displayBitmap(imageView, options, listener);
             }
         });
@@ -67,82 +63,30 @@ public final class BitmapLoader {
             throw new IllegalArgumentException("Width or Height is illegal!");
         }
 
-        new AsyncHandlerHelper(imageView, options, listener).execute();
+        if (imageView.getWidth() != width && imageView.getHeight() != height) {
+            ViewGroup.LayoutParams params = imageView.getLayoutParams();
+            params.width = width;
+            params.height = height;
+            imageView.setLayoutParams(params);
+        }
+
+        new SyncHandlerHelper(imageView, options, listener).execute();
     }
 
-    private class AsyncHandlerHelper extends HandlerHelper<Void, Bitmap> {
 
-        private boolean error = false;
-
-        private ImageView imageView;
-        private DisplayBitmapOptions options;
-        private DisplayListener listener;
-
-        public AsyncHandlerHelper(ImageView imageView, DisplayBitmapOptions options, DisplayListener listener) {
-            super();
-            this.imageView = imageView;
-            this.options = options;
-            this.listener = listener;
+    public void displayBitmapInRecyclerView(RecyclerView.ViewHolder viewHolder, String imagePath, DisplayBitmapOptions options, DisplayListener listener) {
+        if (mHelper == null) {
+            throw new IllegalAccessError("You must call setRecyclerView() before this!");
         }
+        mHelper.displayBitmap(viewHolder, imagePath, options, listener);
+    }
 
-        @Override
-        protected Bitmap doInThread(Void... params) {
-            try {
-                switch (options.getType()) {
-                    case DisplayBitmapOptions.TYPE_DATA:
-                        return loadBitmap(BitmapUtil.getDstBitmap(options.getData(), options.getWidth(), options.getHeight()), options.getShape());
-                    case DisplayBitmapOptions.TYPE_PATH:
-                        return loadBitmap(BitmapUtil.getDstBitmap(options.getPath(), options.getWidth(), options.getHeight()), options.getShape());
-                    case DisplayBitmapOptions.TYPE_INPUT_STREAM:
-                        return loadBitmap(BitmapUtil.getDstBitmap(options.getInputStream(), options.getWidth(), options.getHeight()), options.getShape());
-                }
-            } catch (Exception e) {
-                error = true;
-                e.printStackTrace();
-            } catch (OutOfMemoryError e) {
-                error = true;
-                e.printStackTrace();
-            }
-            return null;
-        }
 
-        @Override
-        protected void onPostResult(Bitmap bitmap) {
-            if (error) {
-                if (listener != null) listener.onError(imageView);
-            } else {
-                if (bitmap != null) {
-                    display(imageView, bitmap, options.getWidth(), options.getHeight());
-                } else {
-                    if (listener != null) listener.onNull(imageView);
-                }
-            }
-        }
-
-        private Bitmap loadBitmap(Bitmap srcBitmap, DisplayShape shape) throws FileNotFoundException, OutOfMemoryError {
-            switch (shape.getShape()) {
-                case DisplayShape.RECT:
-                    break;
-                case DisplayShape.ROUND_RECT:
-                    return BitmapUtil.getRoundedBitmap(srcBitmap, shape.getRadius());
-                case DisplayShape.CIRCLE:
-                    CircleShape circleShape = (CircleShape) shape;
-                    if (circleShape.hasBorder()) {
-                        return BitmapUtil.getCircleBitmapWithBorder(srcBitmap, circleShape.getBorderWidth(), circleShape.getBorderColor());
-                    } else {
-                        return BitmapUtil.getCircleBitmap(srcBitmap);
-                    }
-                case DisplayShape.CHAT:
-                    ChatShape chatShape = (ChatShape) shape;
-                    if (chatShape.getOrientation() == ChatShape.LEFT) {
-                        return BitmapUtil.getChatLeftBitmap(srcBitmap, chatShape.getRadius());
-                    } else if (chatShape.getOrientation() == ChatShape.RIGHT) {
-                        return BitmapUtil.getChatRightBitmap(srcBitmap, chatShape.getRadius());
-                    }
-                default:
-                    break;
-            }
-            return srcBitmap;
+    public void setRecyclerView(RecyclerView recyclerView) {
+        if (mHelper == null) {
+            mHelper = new RecyclerViewHelper();
+            recyclerView.addOnScrollListener(mHelper);
         }
     }
+
 }

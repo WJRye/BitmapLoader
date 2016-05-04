@@ -1,26 +1,19 @@
 package com.wj.bitmaploader.example;
 
-import android.content.res.Resources;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ImageView;
 
 import com.wj.bitmaploader.R;
-import com.wj.bitmaploader.listener.DisplayListener;
-import com.wj.bitmaploader.loader.BitmapLoader;
-import com.wj.bitmaploader.loader.DisplayBitmapOptions;
-import com.wj.bitmaploader.shape.ChatShape;
-import com.wj.bitmaploader.shape.CircleShape;
-
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
+import com.wj.bitmaploader.example.adapter.GridAdapter;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -31,51 +24,57 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         getWindow().setBackgroundDrawable(new ColorDrawable(Color.GREEN));
-        ImageView iv1 = (ImageView) findViewById(R.id.iv1);
-        ImageView iv2 = (ImageView) findViewById(R.id.iv2);
-        String path = "/mnt/sdcard/DCIM/Album/1460534123086.jpg";
 
-//        BitmapLoader.getInstance().displayChatRightBitmap(iv, path, 480, 540, 20);
-        try {
-            InputStream inputStream = new BufferedInputStream(new FileInputStream(new File(path)));
-            DisplayBitmapOptions options1 = new DisplayBitmapOptions.Builder(DisplayBitmapOptions.TYPE_INPUT_STREAM).width(480).height(640).inputStream(inputStream).shape(new CircleShape(20, Color.BLUE)).build();
-
-            BitmapLoader.getInstance().displayBitmap(iv1, options1, new DisplayListener() {
-
-                @Override
-                public void onError(ImageView iv) {
-                    Log.d(TAG, "onError-->");
-                }
-
-                @Override
-                public void onNull(ImageView iv) {
-                    Log.d(TAG, "onNull");
-                }
-            });
-            int width = Resources.getSystem().getDisplayMetrics().widthPixels;
-            int height = Resources.getSystem().getDisplayMetrics().heightPixels;
-
-            DisplayBitmapOptions options = new DisplayBitmapOptions.Builder(DisplayBitmapOptions.TYPE_PATH).width(240).height(480).path(path).shape(new ChatShape(ChatShape.RIGHT, 20)).build();
-            BitmapLoader.getInstance().displayBitmap(iv2, path, new DisplayListener() {
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerview);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setLayoutManager(new GridLayoutManager(this, 3));
+        recyclerView.setAdapter(new GridAdapter(this, recyclerView, 3));
 
 
-                @Override
-                public void onError(ImageView iv) {
-                    Log.d(TAG, "onError-->");
-                }
-
-                @Override
-                public void onNull(ImageView iv) {
-                    Log.d(TAG, "onNull");
-                }
-            });
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-
+//        ImageView imageView = (ImageView) findViewById(R.id.imageview);
+//        String imagePath = "/mnt/sdcard/DCIM/Album/1460534123086.jpg";
+//        BitmapLoader.getInstance().displayBitmap(imageView, imagePath, null);
+//        DisplayBitmapOptions options = new DisplayBitmapOptions.Builder().width(480).height(480).path(imagePath).shape(new RoundRectShape(48)).build();
+//        BitmapLoader.getInstance().displayBitmap(imageView, options, null);
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.d(TAG, "onStart");
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        Log.d(TAG, "onRestoreInstanceState");
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Log.d(TAG, "onSaveInstanceState");
+    }
+
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.d(TAG, "onPause");
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.d(TAG, "onStop");
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        Log.d(TAG, "onConfigurationChanged-->");
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

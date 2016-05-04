@@ -24,29 +24,31 @@ public final class DisplayBitmapOptions {
     private String path;
     private InputStream inputStream;
     private DisplayShape shape;
+    private int loadingImage;
 
     private DisplayBitmapOptions(Builder builder) {
-        this.width = builder.width;
-        this.height = builder.height;
-        this.type = builder.type;
+        width = builder.width;
+        height = builder.height;
+        type = builder.type;
         if (builder.shape == null) {
-            this.shape = new RectShape();
+            shape = new RectShape();
         } else {
-            this.shape = builder.shape;
+            shape = builder.shape;
         }
         switch (type) {
             case TYPE_DATA:
-                this.data = builder.data;
+                data = builder.data;
                 break;
             case TYPE_PATH:
-                this.path = builder.path;
+                path = builder.path;
                 break;
             case TYPE_INPUT_STREAM:
-                this.inputStream = builder.inputStream;
+                inputStream = builder.inputStream;
                 break;
             default:
                 break;
         }
+        loadingImage = builder.loadingImage;
     }
 
     public static class Builder {
@@ -57,9 +59,18 @@ public final class DisplayBitmapOptions {
         private String path;
         private InputStream inputStream;
         private DisplayShape shape;
+        private int loadingImage;
 
-        public Builder(int type) {
-            this.type = type;
+        public Builder() {
+
+        }
+
+        public Builder(DisplayBitmapOptions options) {
+            if (options == null) throw new NullPointerException("DisplayBitmapOptions is null!");
+            this.width(options.width);
+            this.height(options.height);
+            this.shape(options.shape);
+            this.setImageOnLoading(options.loadingImage);
         }
 
         public Builder width(int width) {
@@ -73,22 +84,38 @@ public final class DisplayBitmapOptions {
         }
 
         public Builder data(byte[] data) {
+            this.type = TYPE_DATA;
             this.data = data;
             return this;
         }
 
         public Builder path(String path) {
+            this.type = TYPE_PATH;
             this.path = path;
             return this;
         }
 
         public Builder inputStream(InputStream inputStream) {
+            this.type = TYPE_INPUT_STREAM;
             this.inputStream = inputStream;
             return this;
         }
 
         public Builder shape(DisplayShape shape) {
             this.shape = shape;
+            return this;
+        }
+
+        public void setImageOnError(int drawableId) {
+
+        }
+
+        public void setImageOnFail(int drawableId) {
+
+        }
+
+        public Builder setImageOnLoading(int drawableId) {
+            this.loadingImage = drawableId;
             return this;
         }
 
@@ -123,6 +150,10 @@ public final class DisplayBitmapOptions {
 
     public DisplayShape getShape() {
         return shape;
+    }
+
+    public int getImageOnLoading() {
+        return loadingImage;
     }
 
 }

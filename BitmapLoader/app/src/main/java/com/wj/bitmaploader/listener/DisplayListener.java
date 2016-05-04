@@ -13,6 +13,6 @@ public interface DisplayListener {
 
     void onError(ImageView iv);
 
-    void onNull(ImageView iv);
+    void onFail(ImageView iv);
 
 }
