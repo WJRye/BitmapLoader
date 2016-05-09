@@ -5,11 +5,14 @@ package com.wj.bitmaploader.loader;/**
 import android.support.v7.widget.RecyclerView;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.widget.AbsListView;
 import android.widget.ImageView;
 
+import com.wj.bitmaploader.helper.AbsListViewHelper;
 import com.wj.bitmaploader.helper.RecyclerViewHelper;
+import com.wj.bitmaploader.helper.SyncHandlerHelper;
+import com.wj.bitmaploader.helper.ViewHelper;
 import com.wj.bitmaploader.listener.DisplayListener;
-import com.wj.bitmaploader.loading.SyncHandlerHelper;
 import com.wj.bitmaploader.shape.RectShape;
 
 /**
@@ -19,7 +22,7 @@ import com.wj.bitmaploader.shape.RectShape;
  */
 public final class BitmapLoader {
     private static final String TAG = "TAG";
-    private RecyclerViewHelper mHelper;
+    private ViewHelper mHelper;
 
     private BitmapLoader() {
     }
@@ -63,7 +66,7 @@ public final class BitmapLoader {
             throw new IllegalArgumentException("Width or Height is illegal!");
         }
 
-        if (imageView.getWidth() != width && imageView.getHeight() != height) {
+        if (imageView.getWidth() == 0 && imageView.getHeight() == 0) {
             ViewGroup.LayoutParams params = imageView.getLayoutParams();
             params.width = width;
             params.height = height;
@@ -74,19 +77,30 @@ public final class BitmapLoader {
     }
 
 
-    public void displayBitmapInRecyclerView(RecyclerView.ViewHolder viewHolder, String imagePath, DisplayBitmapOptions options, DisplayListener listener) {
+    public void displayBitmap(Object viewHolder) {
         if (mHelper == null) {
             throw new IllegalAccessError("You must call setRecyclerView() before this!");
         }
-        mHelper.displayBitmap(viewHolder, imagePath, options, listener);
+        mHelper.displayBitmap(viewHolder);
     }
 
 
-    public void setRecyclerView(RecyclerView recyclerView) {
-        if (mHelper == null) {
-            mHelper = new RecyclerViewHelper();
-            recyclerView.addOnScrollListener(mHelper);
+    public void setView(Object view) {
+        if (view == null) throw new NullPointerException("RecyclerView is null!");
+
+        if (mHelper != null) {
+            mHelper.reset();
+            mHelper = null;
         }
+
+        if (view instanceof RecyclerView) {
+            mHelper = new RecyclerViewHelper();
+        } else if (view instanceof AbsListView) {
+            mHelper = new AbsListViewHelper();
+        }
+
+        mHelper.setView(view);
     }
+
 
 }

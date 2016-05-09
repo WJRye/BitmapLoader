@@ -1,9 +1,8 @@
-package com.wj.bitmaploader.loading;
+package com.wj.bitmaploader.helper;/**
+ * Created by wangjiang on 2016/5/4.
+ */
 
-import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
-import android.os.AsyncTask;
-import android.support.v4.util.LruCache;
 import android.widget.ImageView;
 
 import com.wj.bitmaploader.listener.DisplayListener;
@@ -15,57 +14,36 @@ import com.wj.bitmaploader.utils.BitmapUtil;
 
 import java.io.FileNotFoundException;
 
-
 /**
- * 该类主要用作于加载图片
+ * User: WangJiang(https://github.com/WJRye)
+ * Date: 2016-05-04
+ * Time: 16:59
  */
-public class AsyncTaskHelper extends AsyncTask<LruCache<Integer, Bitmap>, Void, Bitmap> {
+public class SyncHandlerHelper extends HandlerHelper<Void, Bitmap> {
     private int KEY = (int) System.currentTimeMillis();
     private boolean error = false;
-    private int cacheKey = -1;
     private ImageView imageView;
     private DisplayBitmapOptions options;
     private DisplayListener listener;
 
-
-    public AsyncTaskHelper(ImageView imageView, DisplayBitmapOptions options, DisplayListener listener, int cacheKey) {
+    public SyncHandlerHelper(ImageView imageView, DisplayBitmapOptions options, DisplayListener listener) {
+        super();
         this.imageView = imageView;
         this.options = options;
         this.imageView.setTag(KEY, options);
         this.listener = listener;
-        this.cacheKey = cacheKey;
     }
 
     @Override
-    protected void onPostExecute(Bitmap result) {
-        if (error) {
-            if (listener != null) listener.onError(imageView);
-        } else {
-            if (result != null) {
-                if (options.equals(imageView.getTag(KEY))) imageView.setImageBitmap(result);
-            } else {
-                if (listener != null) listener.onFail(imageView);
-            }
-        }
-    }
-
-    @SuppressLint("NewApi")
-    @Override
-    protected Bitmap doInBackground(@SuppressWarnings("unchecked") LruCache<Integer, Bitmap>... params) {
-        Bitmap bitmap = null;
+    protected Bitmap doInThread(Void... params) {
         try {
             switch (options.getType()) {
                 case DisplayBitmapOptions.TYPE_DATA:
-                    bitmap = loadBitmap(BitmapUtil.getDstBitmap(options.getData(), options.getWidth(), options.getHeight()), options.getShape());
-                    break;
+                    return loadBitmap(BitmapUtil.getDstBitmap(options.getData(), options.getWidth(), options.getHeight()), options.getShape());
                 case DisplayBitmapOptions.TYPE_PATH:
-                    bitmap = loadBitmap(BitmapUtil.getDstBitmap(options.getPath(), options.getWidth(), options.getHeight()), options.getShape());
-                    break;
+                    return loadBitmap(BitmapUtil.getDstBitmap(options.getPath(), options.getWidth(), options.getHeight()), options.getShape());
                 case DisplayBitmapOptions.TYPE_INPUT_STREAM:
-                    bitmap = loadBitmap(BitmapUtil.getDstBitmap(options.getInputStream(), options.getWidth(), options.getHeight()), options.getShape());
-                    break;
-                default:
-                    break;
+                    return loadBitmap(BitmapUtil.getDstBitmap(options.getInputStream(), options.getWidth(), options.getHeight()), options.getShape());
             }
         } catch (Exception e) {
             error = true;
@@ -74,14 +52,26 @@ public class AsyncTaskHelper extends AsyncTask<LruCache<Integer, Bitmap>, Void, 
             error = true;
             e.printStackTrace();
         }
-        if (bitmap != null && cacheKey != -1) {
-            params[0].put(Integer.valueOf(cacheKey), bitmap);
+        return null;
+    }
+
+    @Override
+    protected void onPostResult(Bitmap bitmap) {
+        if (error) {
+            if (listener != null) listener.onError(imageView);
+        } else {
+            if (bitmap != null) {
+                if (options.equals(imageView.getTag(KEY))) {
+                    imageView.setImageBitmap(bitmap);
+                }
+            } else {
+                if (listener != null) listener.onFail(imageView);
+            }
         }
-        return bitmap;
     }
 
     private static Bitmap loadBitmap(Bitmap srcBitmap, DisplayShape shape) throws FileNotFoundException, OutOfMemoryError {
-        switch (shape.getShape()) {
+        switch (shape.getShapeType()) {
             case DisplayShape.RECT:
                 break;
             case DisplayShape.ROUND_RECT:
@@ -105,4 +95,6 @@ public class AsyncTaskHelper extends AsyncTask<LruCache<Integer, Bitmap>, Void, 
         }
         return srcBitmap;
     }
+
+
 }

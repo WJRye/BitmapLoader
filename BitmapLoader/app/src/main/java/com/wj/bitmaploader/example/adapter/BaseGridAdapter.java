@@ -3,15 +3,14 @@ package com.wj.bitmaploader.example.adapter;/**
  */
 
 import android.content.Context;
-import android.database.Cursor;
-import android.provider.MediaStore;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.wj.bitmaploader.R;
-import com.wj.bitmaploader.helper.ViewHelper;
+import com.wj.bitmaploader.helper.RecyclerViewViewHolder;
+import com.wj.bitmaploader.loader.BitmapLoader;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,35 +34,18 @@ public abstract class BaseGridAdapter extends RecyclerView.Adapter {
     //item 的宽高
     int[] mWH = null;
     List<String> mUris = new ArrayList<>();
+    BitmapLoader mLoader = BitmapLoader.getInstance();
 
-    public BaseGridAdapter(Context context, RecyclerView recyclerView, int spanCount, int orientation) {
+
+    public BaseGridAdapter(List<String> uris, RecyclerView recyclerView, int spanCount, int orientation) {
         mOrientation = orientation;
-        mWH = getWidthAndHeight(context, spanCount);
-        mUris.addAll(getUris(context));
+        mWH = getWidthAndHeight(recyclerView.getContext(), spanCount);
+        mUris.addAll(uris);
+        mLoader.setView(recyclerView);
     }
 
     public abstract int[] getWidthAndHeight(Context context, int spanCount);
 
-
-    /**
-     * 获得系统图片的路径
-     *
-     * @param context
-     * @return
-     */
-    private ArrayList<String> getUris(Context context) {
-        ArrayList<String> uris = new ArrayList<>();
-        //按照添加时间倒叙排序
-        Cursor cursor = context.getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, new String[]{MediaStore.MediaColumns.DATA, MediaStore.MediaColumns.DATE_ADDED}, null, null, "date_added desc");
-        if (cursor != null) {
-            while (cursor.moveToNext()) {
-                uris.add(cursor.getString(0));
-            }
-            cursor.close();
-            cursor = null;
-        }
-        return uris;
-    }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
@@ -89,7 +71,7 @@ public abstract class BaseGridAdapter extends RecyclerView.Adapter {
         return mUris.size();
     }
 
-    public static class ViewCache extends ViewHelper {
+    public static class ViewCache extends RecyclerViewViewHolder {
         public ViewCache(View itemView) {
             super(itemView);
             imageView = (ImageView) itemView;

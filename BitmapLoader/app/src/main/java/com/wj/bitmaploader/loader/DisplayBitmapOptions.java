@@ -21,10 +21,12 @@ public final class DisplayBitmapOptions {
     private int height;
     private int type;
     private byte[] data;
+    private int loadingImage;
+    private String uniqueID;
     private String path;
     private InputStream inputStream;
     private DisplayShape shape;
-    private int loadingImage;
+
 
     private DisplayBitmapOptions(Builder builder) {
         width = builder.width;
@@ -48,6 +50,7 @@ public final class DisplayBitmapOptions {
             default:
                 break;
         }
+        uniqueID = builder.uniqueID;
         loadingImage = builder.loadingImage;
     }
 
@@ -59,18 +62,11 @@ public final class DisplayBitmapOptions {
         private String path;
         private InputStream inputStream;
         private DisplayShape shape;
+        private String uniqueID;
         private int loadingImage;
 
         public Builder() {
 
-        }
-
-        public Builder(DisplayBitmapOptions options) {
-            if (options == null) throw new NullPointerException("DisplayBitmapOptions is null!");
-            this.width(options.width);
-            this.height(options.height);
-            this.shape(options.shape);
-            this.setImageOnLoading(options.loadingImage);
         }
 
         public Builder width(int width) {
@@ -86,19 +82,26 @@ public final class DisplayBitmapOptions {
         public Builder data(byte[] data) {
             this.type = TYPE_DATA;
             this.data = data;
+            setUniqueID(String.valueOf(data.hashCode()));
             return this;
         }
 
         public Builder path(String path) {
             this.type = TYPE_PATH;
             this.path = path;
+            setUniqueID(path);
             return this;
         }
 
         public Builder inputStream(InputStream inputStream) {
             this.type = TYPE_INPUT_STREAM;
             this.inputStream = inputStream;
+            setUniqueID(String.valueOf(inputStream.hashCode()));
             return this;
+        }
+
+        private void setUniqueID(String uniqueID) {
+            this.uniqueID = uniqueID;
         }
 
         public Builder shape(DisplayShape shape) {
@@ -156,4 +159,7 @@ public final class DisplayBitmapOptions {
         return loadingImage;
     }
 
+    public String getUniqueID() {
+        return uniqueID;
+    }
 }

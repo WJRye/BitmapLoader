@@ -4,8 +4,6 @@ package com.wj.bitmaploader;/**
 
 import android.app.Application;
 
-import com.squareup.leakcanary.LeakCanary;
-
 /**
  * User: WangJiang(https://github.com/WJRye)
  * Date: 2016-04-27
@@ -15,6 +13,6 @@ public class BitmapLoaderApplication extends Application{
     @Override
     public void onCreate() {
         super.onCreate();
-        LeakCanary.install(this);
+//        LeakCanary.install(this);
     }
 }

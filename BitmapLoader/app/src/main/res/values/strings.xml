@@ -4,5 +4,7 @@
     <string name="app_name">BitmapLoader</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="delete">Delete</string>
+    <string name="title_activity_abs_list_view">AbsListViewActivity</string>
 
 </resources>

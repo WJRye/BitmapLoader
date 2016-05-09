@@ -1,4 +1,4 @@
-package com.wj.bitmaploader.loading;/**
+package com.wj.bitmaploader.helper;/**
  * Created by wangjiang on 2016/4/27.
  */
 

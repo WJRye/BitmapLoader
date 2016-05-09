@@ -10,11 +10,17 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PaintFlagsDrawFilter;
 import android.graphics.Path;
+import android.graphics.PixelFormat;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.graphics.drawable.Drawable;
 import android.media.ExifInterface;
+
+import com.wj.bitmaploader.shape.ChatShape;
+import com.wj.bitmaploader.shape.CircleShape;
+import com.wj.bitmaploader.shape.DisplayShape;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
@@ -54,7 +60,7 @@ public final class BitmapUtil {
         return getChatRightBitmap(srcBitmap, radius);
     }
 
-    public static Bitmap getChatRightBitmap(Bitmap srcBitmap, int radius) throws OutOfMemoryError, FileNotFoundException {
+    public static Bitmap getChatRightBitmap(Bitmap srcBitmap, int radius) throws OutOfMemoryError {
 
         int width = srcBitmap.getWidth();
         int height = srcBitmap.getHeight();
@@ -94,7 +100,7 @@ public final class BitmapUtil {
 
     }
 
-    public static Bitmap getChatLeftBitmap(Bitmap srcBitmap, int radius) throws OutOfMemoryError, FileNotFoundException {
+    public static Bitmap getChatLeftBitmap(Bitmap srcBitmap, int radius) throws OutOfMemoryError {
         Path path = new Path();
         float xStart = 20f;
         float yStart = 50f;
@@ -376,5 +382,42 @@ public final class BitmapUtil {
             e.printStackTrace();
         }
         return degree;
+    }
+
+    public static Bitmap drawable2Bitmap(Drawable drawable, int width, int height) {
+        Bitmap bitmap = Bitmap.createBitmap(width, height, drawable.getOpacity() != PixelFormat.OPAQUE ? Config.ARGB_4444 : Config.RGB_565);
+        Canvas canvas = new Canvas(bitmap);
+        drawable.setBounds(0, 0, width, height);
+        drawable.draw(canvas);
+        return bitmap;
+    }
+
+    public static Bitmap getBitmapByShape(Bitmap srcBitmap, DisplayShape shape) throws OutOfMemoryError {
+        switch (shape.getShapeType()) {
+            case DisplayShape.RECT:
+                break;
+            case DisplayShape.ROUND_RECT:
+                srcBitmap = BitmapUtil.getRoundedBitmap(srcBitmap, shape.getRadius());
+                break;
+            case DisplayShape.CIRCLE:
+                CircleShape circleShape = (CircleShape) shape;
+                if (circleShape.hasBorder()) {
+                    srcBitmap = BitmapUtil.getCircleBitmapWithBorder(srcBitmap, circleShape.getBorderWidth(), circleShape.getBorderColor());
+                } else {
+                    srcBitmap = BitmapUtil.getCircleBitmap(srcBitmap);
+                }
+                break;
+            case DisplayShape.CHAT:
+                ChatShape chatShape = (ChatShape) shape;
+                if (chatShape.getOrientation() == ChatShape.LEFT) {
+                    srcBitmap = BitmapUtil.getChatLeftBitmap(srcBitmap, chatShape.getRadius());
+                } else if (chatShape.getOrientation() == ChatShape.RIGHT) {
+                    srcBitmap = BitmapUtil.getChatRightBitmap(srcBitmap, chatShape.getRadius());
+                }
+                break;
+            default:
+                break;
+        }
+        return srcBitmap;
     }
 }

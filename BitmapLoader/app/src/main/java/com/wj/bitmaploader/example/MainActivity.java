@@ -1,100 +1,67 @@
 package com.wj.bitmaploader.example;
 
-import android.content.res.Configuration;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.util.TypedValue;
+import android.view.Gravity;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.wj.bitmaploader.R;
-import com.wj.bitmaploader.example.adapter.GridAdapter;
+import com.wj.bitmaploader.example.util.DisplayUtil;
 
 
-public class MainActivity extends ActionBarActivity {
-    private static final String TAG = "TAG";
+public class MainActivity extends BaseActivity implements View.OnClickListener {
+
+    private String[] mTitles;
+    private int[] mTypes = {RecyclerViewActivity.TYPE_LIST, RecyclerViewActivity.TYPE_GRID, RecyclerViewActivity.TYPE_STAGGERED_GRID_HORIZONTAL, RecyclerViewActivity.TYPE_STAGGERED_GRID_VERTICAL};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        getWindow().setBackgroundDrawable(new ColorDrawable(Color.GREEN));
-
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerview);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.setLayoutManager(new GridLayoutManager(this, 3));
-        recyclerView.setAdapter(new GridAdapter(this, recyclerView, 3));
-
-
-//        ImageView imageView = (ImageView) findViewById(R.id.imageview);
-//        String imagePath = "/mnt/sdcard/DCIM/Album/1460534123086.jpg";
-//        BitmapLoader.getInstance().displayBitmap(imageView, imagePath, null);
-//        DisplayBitmapOptions options = new DisplayBitmapOptions.Builder().width(480).height(480).path(imagePath).shape(new RoundRectShape(48)).build();
-//        BitmapLoader.getInstance().displayBitmap(imageView, options, null);
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        Log.d(TAG, "onStart");
+    public View getContentView() {
+        mTitles = getResources().getStringArray(R.array.titles);
+        LinearLayout layout = new LinearLayout(this);
+        layout.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        layout.setOrientation(LinearLayout.VERTICAL);
+        for (int i = 0, length = mTitles.length; i < length; i++) {
+            TextView textView = new TextView(this);
+            textView.setTag(Integer.valueOf(mTypes[i]));
+            textView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, getResources().getDimensionPixelSize(R.dimen.size_50dp)));
+            textView.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
+            textView.setPadding(getResources().getDimensionPixelSize(R.dimen.padding_10dp), 0, 0, 0);
+            textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, getResources().getDimensionPixelSize(R.dimen.textSize_18sp));
+            textView.setBackgroundDrawable(DisplayUtil.getSelectableItemBackground(this));
+            textView.setOnClickListener(this);
+            textView.setText(mTitles[i]);
+            layout.addView(textView);
+            View view = new View(this);
+            view.setBackgroundColor(getResources().getColor(android.R.color.darker_gray));
+            view.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, getResources().getDimensionPixelSize(R.dimen.line_1dp)));
+            layout.addView(view);
+        }
+        return layout;
     }
 
     @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        Log.d(TAG, "onRestoreInstanceState");
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        Log.d(TAG, "onSaveInstanceState");
-    }
-
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        Log.d(TAG, "onPause");
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        Log.d(TAG, "onStop");
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        Log.d(TAG, "onConfigurationChanged-->");
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+    public void onClick(View v) {
+        Integer tag = (Integer) v.getTag();
+        if (tag != null) {
+            int type = tag.intValue();
+            for (int i = 0, length = mTypes.length; i < length; i++) {
+                if (mTypes[i] == type) {
+                    Intent intent = new Intent(this, RecyclerViewActivity.class);
+                    intent.putExtra(RecyclerViewActivity.TYPE, type);
+                    intent.putExtra(RecyclerViewActivity.TITLE, mTitles[i]);
+                    startActivity(intent);
+                }
+            }
         }
 
-        return super.onOptionsItemSelected(item);
     }
 }

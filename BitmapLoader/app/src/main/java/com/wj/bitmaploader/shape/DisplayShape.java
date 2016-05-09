@@ -21,7 +21,7 @@ public abstract class DisplayShape {
         this.radius = radius;
     }
 
-    public int getShape() {
+    public int getShapeType() {
         return shape;
     }
 
