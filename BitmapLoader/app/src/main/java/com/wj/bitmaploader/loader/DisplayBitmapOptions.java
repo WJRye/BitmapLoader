@@ -8,6 +8,7 @@ import com.wj.bitmaploader.shape.RectShape;
 import java.io.InputStream;
 
 /**
+ * 该类用于封装加载的图片的信息
  * User: WangJiang(https://github.com/WJRye)
  * Date: 2016-04-27
  * Time: 10:44
@@ -17,14 +18,38 @@ public final class DisplayBitmapOptions {
     public static final int TYPE_PATH = 2;
     public static final int TYPE_INPUT_STREAM = 3;
 
+    /**
+     * 图片宽度
+     */
     private int width;
+    /**
+     * 图片高度
+     */
     private int height;
+    /**
+     * 图片类型（存储路径，byte数据，输入流）
+     */
     private int type;
+    /**
+     * 图片byte数据
+     */
     private byte[] data;
+    /**
+     * 加载图片时显示的默认图片
+     */
     private int loadingImage;
     private String uniqueID;
+    /**
+     * 图片存储路径
+     */
     private String path;
+    /**
+     * 图片输入流
+     */
     private InputStream inputStream;
+    /**
+     * 图片形状
+     */
     private DisplayShape shape;
 
 

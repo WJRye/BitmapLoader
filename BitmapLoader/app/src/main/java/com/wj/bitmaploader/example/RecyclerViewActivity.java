@@ -2,8 +2,6 @@ package com.wj.bitmaploader.example;/**
  * Created by wangjiang on 2016/4/7.
  */
 
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -39,7 +37,6 @@ public class RecyclerViewActivity extends BaseActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().setBackgroundDrawable(new ColorDrawable(Color.BLACK));
         getSupportActionBar().setTitle(getIntent().getStringExtra(TITLE));
         initViews();
     }
@@ -54,8 +51,8 @@ public class RecyclerViewActivity extends BaseActivity {
         switch (type) {
             case TYPE_LIST: {
                 layoutManager = new LinearLayoutManager(this);
-//                dividerItemDecoration = new DividerItemDecoration(this, DividerItemDecoration.TYPE_LIST);
-//                mRecyclerView.addItemDecoration(dividerItemDecoration);
+                dividerItemDecoration = new DividerItemDecoration(this, DividerItemDecoration.TYPE_LIST);
+                mRecyclerView.addItemDecoration(dividerItemDecoration);
                 mAdapter = new ListAdapter(getUris(), mRecyclerView);
                 break;
             }

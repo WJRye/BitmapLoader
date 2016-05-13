@@ -15,6 +15,7 @@ import com.wj.bitmaploader.utils.BitmapUtil;
 import java.io.FileNotFoundException;
 
 /**
+ * 该类用于帮助加载少量的图片
  * User: WangJiang(https://github.com/WJRye)
  * Date: 2016-05-04
  * Time: 16:59
@@ -70,6 +71,13 @@ public class SyncHandlerHelper extends HandlerHelper<Void, Bitmap> {
         }
     }
 
+    /**
+     * @param srcBitmap
+     * @param shape
+     * @return
+     * @throws FileNotFoundException
+     * @throws OutOfMemoryError
+     */
     private static Bitmap loadBitmap(Bitmap srcBitmap, DisplayShape shape) throws FileNotFoundException, OutOfMemoryError {
         switch (shape.getShapeType()) {
             case DisplayShape.RECT:

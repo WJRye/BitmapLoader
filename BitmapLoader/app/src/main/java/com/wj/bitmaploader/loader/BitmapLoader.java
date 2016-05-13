@@ -36,6 +36,14 @@ public final class BitmapLoader {
     }
 
 
+    /**
+     * 显示图片
+     *
+     * @param imageView
+     * @param imagePath 图片路径
+     * @param listener
+     * @see DisplayListener
+     */
     public void displayBitmap(final ImageView imageView, final String imagePath, final DisplayListener listener) {
         imageView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
@@ -46,6 +54,14 @@ public final class BitmapLoader {
         });
     }
 
+    /**
+     * 显示图片
+     *
+     * @param imageView
+     * @param data      图片byte数据
+     * @param listener
+     * @see DisplayListener
+     */
     public void displayBitmap(final ImageView imageView, final byte[] data, final DisplayListener listener) {
         imageView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
@@ -56,6 +72,13 @@ public final class BitmapLoader {
         });
     }
 
+    /**
+     * 显示图片
+     *
+     * @param imageView
+     * @param options   @see DisplayBitmapOptions
+     * @param listener  @see DisplayListener
+     */
     public void displayBitmap(ImageView imageView, DisplayBitmapOptions options, DisplayListener listener) {
         if (imageView == null || options == null) {
             throw new NullPointerException("ImageView or DisplayBitmapOptions is null!");
@@ -77,6 +100,11 @@ public final class BitmapLoader {
     }
 
 
+    /**
+     * 在RecyclerView或者AbsListView(ListView,GridView)中显示图片
+     *
+     * @param viewHolder AbsListViewViewHolder 或者 RecyclerViewViewHolder
+     */
     public void displayBitmap(Object viewHolder) {
         if (mHelper == null) {
             throw new IllegalAccessError("You must call setRecyclerView() before this!");
@@ -85,6 +113,11 @@ public final class BitmapLoader {
     }
 
 
+    /**
+     * 在显示大量图片时，需要先设置view才能调用displayBitmap(Object viewHolder)方法
+     *
+     * @param view RecyclerView或者AbsListView(ListView,GridView)
+     */
     public void setView(Object view) {
         if (view == null) throw new NullPointerException("RecyclerView is null!");
 

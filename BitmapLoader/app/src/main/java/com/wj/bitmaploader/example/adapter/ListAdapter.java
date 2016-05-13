@@ -13,7 +13,7 @@ import com.wj.bitmaploader.R;
 import com.wj.bitmaploader.helper.RecyclerViewViewHolder;
 import com.wj.bitmaploader.loader.BitmapLoader;
 import com.wj.bitmaploader.loader.DisplayBitmapOptions;
-import com.wj.bitmaploader.shape.ChatShape;
+import com.wj.bitmaploader.shape.CircleShape;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,9 +24,6 @@ import java.util.List;
  * Time: 19:45
  */
 public class ListAdapter extends RecyclerView.Adapter {
-
-    private static final int VIEW_TYPE_LEFT = 1;
-    private static final int VIEW_TYPE_RIGHT = 2;
     private int mWidth;
     private int mHeight;
     private List<String> mUris = new ArrayList<>();
@@ -37,41 +34,26 @@ public class ListAdapter extends RecyclerView.Adapter {
         mLoader.setView(recyclerView);
         Context context = recyclerView.getContext();
         mWidth = context.getResources().getDimensionPixelSize(R.dimen.size_60dp);
-        mHeight = context.getResources().getDimensionPixelSize(R.dimen.size_80dp);
+        mHeight = context.getResources().getDimensionPixelSize(R.dimen.size_60dp);
     }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         Context context = viewGroup.getContext();
         RecyclerView.LayoutParams params = new RecyclerView.LayoutParams(RecyclerView.LayoutParams.MATCH_PARENT, RecyclerView.LayoutParams.WRAP_CONTENT);
-        if (i == VIEW_TYPE_LEFT) {
-            View leftView = LayoutInflater.from(context).inflate(R.layout.list_item_left, null);
-            leftView.setLayoutParams(params);
-            return new ViewCacheLeft(leftView);
-        } else if (i == VIEW_TYPE_RIGHT) {
-            View rightView = LayoutInflater.from(context).inflate(R.layout.list_item_right, null);
-            rightView.setLayoutParams(params);
-            return new ViewCacheRight(rightView);
-        }
-        return null;
+        View view = LayoutInflater.from(context).inflate(R.layout.list_item, null);
+        view.setLayoutParams(params);
+        return new ViewCache(view);
+
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int i) {
-        if (i % 2 == 0) {
-            ViewCacheLeft viewCache = (ViewCacheLeft) viewHolder;
-            DisplayBitmapOptions dbo = new DisplayBitmapOptions.Builder().
-                    path(mUris.get(i)).width(mWidth).height(mHeight).shape(new ChatShape(ChatShape.LEFT, 20)).build();
-            viewCache.options = dbo;
-            mLoader.displayBitmap(viewCache);
-        } else {
-            ViewCacheRight viewCache = (ViewCacheRight) viewHolder;
-            DisplayBitmapOptions dbo = new DisplayBitmapOptions.Builder().
-                    path(mUris.get(i)).width(mWidth).height(mHeight).shape(new ChatShape(ChatShape.RIGHT, 20)).build();
-            viewCache.options = dbo;
-            mLoader.displayBitmap(viewCache);
-        }
-
+        ViewCache viewCache = (ViewCache) viewHolder;
+        DisplayBitmapOptions dbo = new DisplayBitmapOptions.Builder().
+                path(mUris.get(i)).width(mWidth).height(mHeight).shape(new CircleShape()).build();
+        viewCache.options = dbo;
+        mLoader.displayBitmap(viewCache);
     }
 
     @Override
@@ -79,25 +61,11 @@ public class ListAdapter extends RecyclerView.Adapter {
         return mUris.size();
     }
 
+    public static class ViewCache extends RecyclerViewViewHolder {
 
-    @Override
-    public int getItemViewType(int position) {
-        return position % 2 == 0 ? VIEW_TYPE_LEFT : VIEW_TYPE_RIGHT;
-    }
-
-    public static class ViewCacheLeft extends RecyclerViewViewHolder {
-
-        public ViewCacheLeft(View itemView) {
+        public ViewCache(View itemView) {
             super(itemView);
-            imageView = (ImageView) itemView.findViewById(R.id.item_imageview_left);
-        }
-    }
-
-    public static class ViewCacheRight extends RecyclerViewViewHolder {
-
-        public ViewCacheRight(View itemView) {
-            super(itemView);
-            imageView = (ImageView) itemView.findViewById(R.id.item_imageview_right);
+            imageView = (ImageView) itemView.findViewById(R.id.item_imageview);
         }
     }
 }
