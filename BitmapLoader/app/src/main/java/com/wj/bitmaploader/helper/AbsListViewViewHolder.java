@@ -12,6 +12,7 @@ import com.wj.bitmaploader.loader.DisplayBitmapOptions;
  * Date: 2016-05-07
  * Time: 19:01
  */
+@Deprecated
 public class AbsListViewViewHolder {
     public ImageView imageView;
     public DisplayBitmapOptions options;

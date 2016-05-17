@@ -14,6 +14,7 @@ import com.wj.bitmaploader.loader.DisplayBitmapOptions;
  * Date: 2016-05-07
  * Time: 18:48
  */
+@Deprecated
 public class AbsListViewHelper extends ViewHelper implements AbsListView.OnScrollListener {
 
     public AbsListViewHelper() {
