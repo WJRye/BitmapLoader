@@ -1,0 +1,46 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical"
+              android:paddingLeft="@dimen/activity_horizontal_margin"
+              android:paddingRight="@dimen/activity_horizontal_margin"
+              android:paddingTop="@dimen/activity_vertical_margin"
+              android:paddingBottom="@dimen/activity_vertical_margin"
+              tools:context="com.wj.bitmaploader.example.DemoActivity">
+
+    <ImageView
+        android:id="@+id/roundRect"
+        android:layout_width="@dimen/size_60dp"
+        android:layout_height="@dimen/size_80dp"/>
+
+    <ImageView
+        android:layout_marginTop="@dimen/margin_10dp"
+        android:id="@+id/circle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <ImageView
+        android:layout_marginTop="@dimen/margin_10dp"
+        android:id="@+id/circleWithBorder"
+        android:layout_width="@dimen/size_60dp"
+        android:layout_height="@dimen/size_80dp"/>
+
+    <LinearLayout
+        android:layout_marginTop="@dimen/margin_10dp"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/chatLeft"
+            android:layout_width="@dimen/size_60dp"
+            android:layout_height="@dimen/size_80dp"/>
+
+        <ImageView
+            android:layout_marginLeft="@dimen/margin_10dp"
+            android:id="@+id/chatRight"
+            android:layout_width="@dimen/size_60dp"
+            android:layout_height="@dimen/size_80dp"/>
+    </LinearLayout>
+</LinearLayout>

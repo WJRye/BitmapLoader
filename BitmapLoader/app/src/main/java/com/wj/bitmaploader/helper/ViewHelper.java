@@ -13,6 +13,8 @@ import android.widget.ImageView;
 
 import com.wj.bitmaploader.listener.DisplayListener;
 import com.wj.bitmaploader.loader.DisplayBitmapOptions;
+import com.wj.bitmaploader.shape.ChatShape;
+import com.wj.bitmaploader.shape.DisplayShape;
 import com.wj.bitmaploader.utils.BitmapUtil;
 
 import java.util.HashSet;
@@ -32,6 +34,7 @@ public abstract class ViewHelper {
      * 缓存正在加载的图片
      */
     private Bitmap mLoadingBitmap;
+    private Bitmap mLoadingChatBitmap;
     /**
      * 否停止了滑动
      */
@@ -88,7 +91,7 @@ public abstract class ViewHelper {
 
         Bitmap bitmap = mLruCache.get(options.getUniqueID());
         if (bitmap == null) {
-            imageView.setImageBitmap(getImageOnLoading(imageView.getContext(), options));
+            setImageOnLoading(imageView, options);
             if (mIsIdle) {
                 //停止滑动时，开始加载图片
                 AsyncTaskHelper helper = new AsyncTaskHelper(imageView, options, listener);
@@ -102,24 +105,43 @@ public abstract class ViewHelper {
 
 
     /**
-     * 获得正在加载的图片
+     * 设置在加载中显示的图片
      *
-     * @param context 上下文对象
+     * @param imageView
      * @param options
-     * @return 正在加载的图片
      */
-    public Bitmap getImageOnLoading(Context context, DisplayBitmapOptions options) {
-        if (mLoadingBitmap == null) {
-            Drawable mLoadingDrawable = null;
-            if (options.getImageOnLoading() <= 0) {
-                mLoadingDrawable = new ColorDrawable(context.getResources().getColor(android.R.color.darker_gray));
-            } else {
-                mLoadingDrawable = context.getResources().getDrawable(options.getImageOnLoading());
+    public void setImageOnLoading(ImageView imageView, DisplayBitmapOptions options) {
+        DisplayShape shape = options.getShape();
+        if (shape.getShapeType() == DisplayShape.CHAT) {
+            ChatShape chatShape = (ChatShape) shape;
+            if (chatShape.getOrientation() == ChatShape.LEFT) {
+                if (mLoadingBitmap == null) {
+                    mLoadingBitmap = getImageOnLoading(imageView.getContext(), options);
+                }
+                imageView.setImageBitmap(mLoadingBitmap);
+            } else if (chatShape.getOrientation() == ChatShape.RIGHT) {
+                if (mLoadingChatBitmap == null) {
+                    mLoadingChatBitmap = getImageOnLoading(imageView.getContext(), options);
+                }
+                imageView.setImageBitmap(mLoadingChatBitmap);
             }
-            Bitmap srcBitmap = BitmapUtil.drawable2Bitmap(mLoadingDrawable, options.getWidth(), options.getHeight());
-            mLoadingBitmap = BitmapUtil.getBitmapByShape(srcBitmap, options.getShape());
+        } else {
+            if (mLoadingBitmap == null) {
+                mLoadingBitmap = getImageOnLoading(imageView.getContext(), options);
+            }
+            imageView.setImageBitmap(mLoadingBitmap);
         }
-        return mLoadingBitmap;
+    }
+
+    private Bitmap getImageOnLoading(Context context, DisplayBitmapOptions options) {
+        Drawable mLoadingDrawable = null;
+        if (options.getImageOnLoading() <= 0) {
+            mLoadingDrawable = new ColorDrawable(context.getResources().getColor(android.R.color.darker_gray));
+        } else {
+            mLoadingDrawable = context.getResources().getDrawable(options.getImageOnLoading());
+        }
+        Bitmap srcBitmap = BitmapUtil.drawable2Bitmap(mLoadingDrawable, options.getWidth(), options.getHeight());
+        return BitmapUtil.getBitmapByShape(srcBitmap, options.getShape());
     }
 
     /**

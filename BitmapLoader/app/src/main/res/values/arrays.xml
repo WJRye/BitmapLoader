@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="titles">
-        <item>List（列表）</item>
-        <item>Grid（网格）</item>
-        <item>StaggeredGrid（横向网格）</item>
-        <item>StaggeredGrid（瀑布流）</item>
+        <item>0,各种图片形状效果展示,com.wj.bitmaploader.example.DemoActivity</item>
+        <item>1,List（列表）聊天图片,com.wj.bitmaploader.example.RecyclerViewActivity</item>
+        <item>2,List（列表）圆形图片,com.wj.bitmaploader.example.RecyclerViewActivity</item>
+        <item>3,Grid（网格）,com.wj.bitmaploader.example.RecyclerViewActivity</item>
+        <item>4,StaggeredGrid（横向网格）,com.wj.bitmaploader.example.RecyclerViewActivity</item>
+        <item>5,StaggeredGrid（瀑布流）,com.wj.bitmaploader.example.RecyclerViewActivity</item>
     </string-array>
 
 </resources>

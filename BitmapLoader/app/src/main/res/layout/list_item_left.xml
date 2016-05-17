@@ -6,9 +6,9 @@
                 android:layout_height="wrap_content">
 
     <ImageView
+        android:scaleType="fitStart"
         android:layout_alignParentLeft="true"
         android:id="@+id/item_imageview_left"
-        android:scaleType="centerCrop"
         android:layout_width="@dimen/size_60dp"
         android:layout_height="@dimen/size_80dp"/>
 

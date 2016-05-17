@@ -88,6 +88,9 @@ public final class BitmapLoader {
         if (width <= 0 || height <= 0) {
             throw new IllegalArgumentException("Width or Height is illegal!");
         }
+        if (imageView.getScaleType() == ImageView.ScaleType.CENTER_CROP) {
+            imageView.setScaleType(ImageView.ScaleType.CENTER);
+        }
 
         if (imageView.getWidth() == 0 && imageView.getHeight() == 0) {
             ViewGroup.LayoutParams params = imageView.getLayoutParams();

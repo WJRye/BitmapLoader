@@ -16,8 +16,24 @@
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+
         </activity>
-        <activity android:name=".example.RecyclerViewActivity"/>
+        <activity android:name=".example.RecyclerViewActivity">
+            <intent-filter>
+                <action android:name="com.wj.bitmaploader.example.RecyclerViewActivity"/>
+
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".example.DemoActivity"
+            android:label="@string/title_activity_demo">
+            <intent-filter>
+                <action android:name="com.wj.bitmaploader.example.DemoActivity"/>
+
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

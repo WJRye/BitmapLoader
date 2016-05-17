@@ -13,6 +13,7 @@ import android.view.View;
 
 import com.wj.bitmaploader.R;
 import com.wj.bitmaploader.example.adapter.BaseGridAdapter;
+import com.wj.bitmaploader.example.adapter.ChatAdapter;
 import com.wj.bitmaploader.example.adapter.GridAdapter;
 import com.wj.bitmaploader.example.adapter.ListAdapter;
 import com.wj.bitmaploader.example.adapter.StaggeredGridAdapter;
@@ -25,19 +26,18 @@ import com.wj.bitmaploader.example.decorator.DividerItemDecoration;
  * Time: 19:29
  */
 public class RecyclerViewActivity extends BaseActivity {
-    public static final int TYPE_LIST = 1;
-    public static final int TYPE_GRID = 2;
-    public static final int TYPE_STAGGERED_GRID_HORIZONTAL = 3;
-    public static final int TYPE_STAGGERED_GRID_VERTICAL = 4;
-    public static final String TYPE = "type";
-    public static final String TITLE = "title";
+    public static final int TYPE_LIST_CHAT = 1;
+    public static final int TYPE_LIST_CIRCLE = 2;
+    public static final int TYPE_GRID = 3;
+    public static final int TYPE_STAGGERED_GRID_HORIZONTAL = 4;
+    public static final int TYPE_STAGGERED_GRID_VERTICAL = 5;
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getSupportActionBar().setTitle(getIntent().getStringExtra(TITLE));
+        setTitle(getIntent().getStringExtra(MainActivity.TITLE));
         initViews();
     }
 
@@ -45,11 +45,16 @@ public class RecyclerViewActivity extends BaseActivity {
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerview);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        int type = getIntent().getIntExtra(TYPE, 0);
+        int type = getIntent().getIntExtra(MainActivity.TYPE, 1);
         RecyclerView.LayoutManager layoutManager = null;
         DividerItemDecoration dividerItemDecoration = null;
         switch (type) {
-            case TYPE_LIST: {
+            case TYPE_LIST_CHAT: {
+                layoutManager = new LinearLayoutManager(this);
+                mAdapter = new ChatAdapter(getUris(), mRecyclerView);
+                break;
+            }
+            case TYPE_LIST_CIRCLE: {
                 layoutManager = new LinearLayoutManager(this);
                 dividerItemDecoration = new DividerItemDecoration(this, DividerItemDecoration.TYPE_LIST);
                 mRecyclerView.addItemDecoration(dividerItemDecoration);
