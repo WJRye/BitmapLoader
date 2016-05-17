@@ -67,7 +67,7 @@ public final class BitmapUtil {
 
         Path path = new Path();
         float xStart = width - 20f;
-        float yStart = 50f;
+        float yStart = 30f;
         float yEnd = yStart + 30f;
         float yCenter = (yStart + yEnd) / 2;
         float d = 2f;
@@ -103,7 +103,7 @@ public final class BitmapUtil {
     public static Bitmap getChatLeftBitmap(Bitmap srcBitmap, int radius) throws OutOfMemoryError {
         Path path = new Path();
         float xStart = 20f;
-        float yStart = 50f;
+        float yStart = 30f;
         float yEnd = yStart + 30f;
         float yCenter = (yStart + yEnd) / 2;
         float d = 2f;
@@ -199,7 +199,8 @@ public final class BitmapUtil {
      * @return 圆形bitmap
      */
     public static Bitmap getCircleBitmap(String imagePath, int dstWidth, int dstHeight) throws OutOfMemoryError, FileNotFoundException {
-        return getCircleBitmap(getDstBitmap(imagePath, dstWidth, dstHeight));
+        int size = Math.min(dstWidth, dstHeight);
+        return getCircleBitmap(getDstBitmap(imagePath, size, size));
     }
 
     /**
@@ -212,8 +213,7 @@ public final class BitmapUtil {
         if (srcBitmap == null) {
             return null;
         }
-        int size = Math.max(srcBitmap.getWidth(), srcBitmap.getHeight());
-
+        int size = Math.min(srcBitmap.getWidth(), srcBitmap.getHeight());
         return drawRoundedBitmap(Bitmap.createScaledBitmap(srcBitmap, size, size, true), size, size, size / 2);
     }
 
