@@ -27,8 +27,8 @@ public class StaggeredGridAdapter extends BaseGridAdapter {
     //缓存Item的高度
     private SparseIntArray mHeightArray = new SparseIntArray();
 
-    public StaggeredGridAdapter(List<String> uris,RecyclerView recyclerView, int spanCount, int orientation) {
-        super(uris,recyclerView, spanCount, orientation);
+    public StaggeredGridAdapter(List<String> uris, RecyclerView recyclerView, int spanCount, int orientation) {
+        super(uris, recyclerView, spanCount, orientation);
     }
 
     @Override
@@ -64,9 +64,9 @@ public class StaggeredGridAdapter extends BaseGridAdapter {
             RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) viewCache.imageView.getLayoutParams();
             params.height = height;
             viewCache.imageView.setLayoutParams(params);
-            dbo = new DisplayBitmapOptions.Builder().path(mUris.get(i)).width(mWH[0]).height(height).build();
+            dbo = new DisplayBitmapOptions.Builder().path(mUris.get(i)).width(mWH[0]).height(height).setImageOnLoading(R.drawable.loading_image).build();
         } else {
-            dbo = new DisplayBitmapOptions.Builder().path(mUris.get(i)).width(mWH[0]).height(mWH[1]).build();
+            dbo = new DisplayBitmapOptions.Builder().path(mUris.get(i)).width(mWH[0]).height(mWH[1]).setImageOnLoading(R.drawable.loading_image).build();
         }
         viewHelper.options = dbo;
         mLoader.displayBitmap(viewHolder);

@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import com.wj.bitmaploader.listener.DisplayListener;
 import com.wj.bitmaploader.loader.DisplayBitmapOptions;
 import com.wj.bitmaploader.utils.BitmapUtil;
+import com.wj.bitmaploader.utils.DisplayShapeUtil;
 
 
 /**
@@ -51,13 +52,13 @@ public class AsyncTaskHelper extends AsyncTask<LruCache<String, Bitmap>, Void, B
         try {
             switch (options.getType()) {
                 case DisplayBitmapOptions.TYPE_DATA:
-                    bitmap = BitmapUtil.getBitmapByShape(BitmapUtil.getDstBitmap(options.getData(), options.getWidth(), options.getHeight()), options.getShape());
+                    bitmap = DisplayShapeUtil.getBitmapByShape(BitmapUtil.getDstBitmap(options.getData(), options.getWidth(), options.getHeight()), options.getShape());
                     break;
                 case DisplayBitmapOptions.TYPE_PATH:
-                    bitmap = BitmapUtil.getBitmapByShape(BitmapUtil.getDstBitmap(options.getPath(), options.getWidth(), options.getHeight()), options.getShape());
+                    bitmap = DisplayShapeUtil.getBitmapByShape(BitmapUtil.getDstBitmap(options.getPath(), options.getWidth(), options.getHeight()), options.getShape());
                     break;
                 case DisplayBitmapOptions.TYPE_INPUT_STREAM:
-                    bitmap = BitmapUtil.getBitmapByShape(BitmapUtil.getDstBitmap(options.getInputStream(), options.getWidth(), options.getHeight()), options.getShape());
+                    bitmap = DisplayShapeUtil.getBitmapByShape(BitmapUtil.getDstBitmap(options.getInputStream(), options.getWidth(), options.getHeight()), options.getShape());
                     break;
                 default:
                     break;

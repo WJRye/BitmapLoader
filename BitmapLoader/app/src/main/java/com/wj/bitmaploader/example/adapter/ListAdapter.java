@@ -51,7 +51,7 @@ public class ListAdapter extends RecyclerView.Adapter {
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int i) {
         ViewCache viewCache = (ViewCache) viewHolder;
         DisplayBitmapOptions dbo = new DisplayBitmapOptions.Builder().
-                path(mUris.get(i)).width(mWidth).height(mHeight).shape(new CircleShape()).build();
+                path(mUris.get(i)).width(mWidth).height(mHeight).shape(new CircleShape()).setImageOnLoading(R.drawable.loading_image).build();
         viewCache.options = dbo;
         mLoader.displayBitmap(viewCache);
     }

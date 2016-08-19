@@ -36,7 +36,9 @@ public class GridAdapter extends BaseGridAdapter {
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int i) {
         RecyclerViewViewHolder viewHelper = (RecyclerViewViewHolder) viewHolder;
-        DisplayBitmapOptions dbo = new DisplayBitmapOptions.Builder().path(mUris.get(i)).width(mWH[0]).height(mWH[1]).build();
+        DisplayBitmapOptions dbo = new DisplayBitmapOptions.Builder().path(mUris.get(i)).width(mWH[0]).height(mWH[1])
+                .setImageOnLoading(R.drawable.loading_image)
+                .build();
         viewHelper.options = dbo;
         mLoader.displayBitmap(viewHolder);
     }

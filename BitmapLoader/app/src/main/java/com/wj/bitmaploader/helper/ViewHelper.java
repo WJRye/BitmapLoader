@@ -2,10 +2,7 @@ package com.wj.bitmaploader.helper;/**
  * Created by wangjiang on 2016/5/7.
  */
 
-import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.support.v4.util.LruCache;
 import android.view.ViewGroup;
@@ -13,7 +10,6 @@ import android.widget.ImageView;
 
 import com.wj.bitmaploader.listener.DisplayListener;
 import com.wj.bitmaploader.loader.DisplayBitmapOptions;
-import com.wj.bitmaploader.shape.ChatShape;
 import com.wj.bitmaploader.shape.DisplayShape;
 import com.wj.bitmaploader.utils.BitmapUtil;
 
@@ -31,22 +27,20 @@ public abstract class ViewHelper {
     static final String TAG = "TAG";
 
     /**
-     * 缓存正在加载的图片
-     */
-    private Bitmap mLoadingBitmap;
-    private Bitmap mLoadingChatBitmap;
-    /**
      * 否停止了滑动
      */
     boolean mIsIdle = true;
+
+    private Bitmap mLoadingBitmap = null;
+
     /**
      * 缓存图片
      */
-    LruCache<String, Bitmap> mLruCache;
+    LruCache<String, Bitmap> mLruCache = null;
     /**
      * 缓存开启的任务
      */
-    Set<AsyncTaskHelper> mAsyncTaskHelpers;
+    Set<AsyncTaskHelper> mAsyncTaskHelpers = null;
 
     public ViewHelper() {
         mLruCache = new LruCache<String, Bitmap>((int) Runtime.getRuntime().maxMemory() / 8) {
@@ -72,7 +66,7 @@ public abstract class ViewHelper {
      * @param options
      * @param listener
      */
-    public void loadBitmap(ImageView imageView, DisplayBitmapOptions options, DisplayListener listener) {
+    public final void loadBitmap(ImageView imageView, DisplayBitmapOptions options, DisplayListener listener) {
         if (imageView == null || options == null) {
             throw new NullPointerException("ImageView or DisplayBitmapOptions is null!");
         }
@@ -103,45 +97,34 @@ public abstract class ViewHelper {
         }
     }
 
-
     /**
-     * 设置在加载中显示的图片
-     *
      * @param imageView
      * @param options
      */
-    public void setImageOnLoading(ImageView imageView, DisplayBitmapOptions options) {
-        DisplayShape shape = options.getShape();
-        if (shape.getShapeType() == DisplayShape.CHAT) {
-            ChatShape chatShape = (ChatShape) shape;
-            if (chatShape.getOrientation() == ChatShape.LEFT) {
-                if (mLoadingBitmap == null) {
-                    mLoadingBitmap = getImageOnLoading(imageView.getContext(), options);
-                }
-                imageView.setImageBitmap(mLoadingBitmap);
-            } else if (chatShape.getOrientation() == ChatShape.RIGHT) {
-                if (mLoadingChatBitmap == null) {
-                    mLoadingChatBitmap = getImageOnLoading(imageView.getContext(), options);
-                }
-                imageView.setImageBitmap(mLoadingChatBitmap);
+    private final void setImageOnLoading(ImageView imageView, DisplayBitmapOptions options) {
+        if (mLoadingBitmap == null) {
+            if (options.getImageOnLoading() <= 0) {
+                imageView.setImageResource(0);
+                return;
             }
-        } else {
-            if (mLoadingBitmap == null) {
-                mLoadingBitmap = getImageOnLoading(imageView.getContext(), options);
+            Bitmap loadingBitmap = BitmapUtil.drawable2Bitmap(imageView.getContext().getResources().getDrawable(options.getImageOnLoading()), options.getWidth(), options.getHeight());
+            switch (options.getShape().getShapeType()) {
+                case DisplayShape.CHAT:
+                    return;
+                case DisplayShape.CIRCLE:
+                    mLoadingBitmap = BitmapUtil.getCircleBitmap(loadingBitmap);
+                    break;
+                case DisplayShape.RECT:
+                    mLoadingBitmap = loadingBitmap;
+                    break;
+                case DisplayShape.ROUND_RECT:
+                    mLoadingBitmap = BitmapUtil.getRoundedBitmap(loadingBitmap, options.getShape().getRadius());
+                    break;
+                default:
+                    break;
             }
-            imageView.setImageBitmap(mLoadingBitmap);
         }
-    }
-
-    private Bitmap getImageOnLoading(Context context, DisplayBitmapOptions options) {
-        Drawable mLoadingDrawable = null;
-        if (options.getImageOnLoading() <= 0) {
-            mLoadingDrawable = new ColorDrawable(context.getResources().getColor(android.R.color.darker_gray));
-        } else {
-            mLoadingDrawable = context.getResources().getDrawable(options.getImageOnLoading());
-        }
-        Bitmap srcBitmap = BitmapUtil.drawable2Bitmap(mLoadingDrawable, options.getWidth(), options.getHeight());
-        return BitmapUtil.getBitmapByShape(srcBitmap, options.getShape());
+        imageView.setImageBitmap(mLoadingBitmap);
     }
 
     /**
@@ -154,7 +137,7 @@ public abstract class ViewHelper {
     /**
      * 取消任务加载
      */
-    public void cancelTasks() {
+    public final void cancelTasks() {
         int size = mAsyncTaskHelpers.size();
         //在滑动的时候，取消未完成的任务
         AsyncTaskHelper[] helpers = mAsyncTaskHelpers.toArray(new AsyncTaskHelper[size]);

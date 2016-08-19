@@ -18,10 +18,6 @@ import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.media.ExifInterface;
 
-import com.wj.bitmaploader.shape.ChatShape;
-import com.wj.bitmaploader.shape.CircleShape;
-import com.wj.bitmaploader.shape.DisplayShape;
-
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -362,7 +358,7 @@ public final class BitmapUtil {
      * @param path 图片路径
      * @return 图片旋转的度数
      */
-    private static final int readPictureDegree(String path) {
+    private static int readPictureDegree(String path) {
         int degree = 0;
         try {
             ExifInterface exifInterface = new ExifInterface(path);
@@ -392,32 +388,5 @@ public final class BitmapUtil {
         return bitmap;
     }
 
-    public static Bitmap getBitmapByShape(Bitmap srcBitmap, DisplayShape shape) throws OutOfMemoryError {
-        switch (shape.getShapeType()) {
-            case DisplayShape.RECT:
-                break;
-            case DisplayShape.ROUND_RECT:
-                srcBitmap = BitmapUtil.getRoundedBitmap(srcBitmap, shape.getRadius());
-                break;
-            case DisplayShape.CIRCLE:
-                CircleShape circleShape = (CircleShape) shape;
-                if (circleShape.hasBorder()) {
-                    srcBitmap = BitmapUtil.getCircleBitmapWithBorder(srcBitmap, circleShape.getBorderWidth(), circleShape.getBorderColor());
-                } else {
-                    srcBitmap = BitmapUtil.getCircleBitmap(srcBitmap);
-                }
-                break;
-            case DisplayShape.CHAT:
-                ChatShape chatShape = (ChatShape) shape;
-                if (chatShape.getOrientation() == ChatShape.LEFT) {
-                    srcBitmap = BitmapUtil.getChatLeftBitmap(srcBitmap, chatShape.getRadius());
-                } else if (chatShape.getOrientation() == ChatShape.RIGHT) {
-                    srcBitmap = BitmapUtil.getChatRightBitmap(srcBitmap, chatShape.getRadius());
-                }
-                break;
-            default:
-                break;
-        }
-        return srcBitmap;
-    }
+
 }
