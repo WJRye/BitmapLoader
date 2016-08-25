@@ -1,4 +1,4 @@
-package com.wj.bitmaploader.views;/**
+package com.wj.bitmaploader.view;/**
  * Created by wangjiang on 2016/5/2.
  */
 

@@ -1,4 +1,4 @@
-package com.wj.bitmaploader.utils;
+package com.wj.bitmaploader.util;
 
 import android.graphics.Bitmap;
 

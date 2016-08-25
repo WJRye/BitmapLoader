@@ -8,8 +8,8 @@ import android.widget.ImageView;
 
 import com.wj.bitmaploader.listener.DisplayListener;
 import com.wj.bitmaploader.loader.DisplayBitmapOptions;
-import com.wj.bitmaploader.utils.BitmapUtil;
-import com.wj.bitmaploader.utils.DisplayShapeUtil;
+import com.wj.bitmaploader.util.BitmapUtil;
+import com.wj.bitmaploader.util.DisplayShapeUtil;
 
 
 /**

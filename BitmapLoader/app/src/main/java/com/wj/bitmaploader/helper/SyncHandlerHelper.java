@@ -10,7 +10,7 @@ import com.wj.bitmaploader.loader.DisplayBitmapOptions;
 import com.wj.bitmaploader.shape.ChatShape;
 import com.wj.bitmaploader.shape.CircleShape;
 import com.wj.bitmaploader.shape.DisplayShape;
-import com.wj.bitmaploader.utils.BitmapUtil;
+import com.wj.bitmaploader.util.BitmapUtil;
 
 import java.io.FileNotFoundException;
 
