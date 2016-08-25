@@ -43,9 +43,13 @@ public class RecyclerViewHelper extends ViewHelper {
 
     @Override
     public void setView(Object view) {
-        RecyclerView recyclerView = (RecyclerView) view;
-        recyclerView.removeOnScrollListener(mOnScrollListener);
-        recyclerView.addOnScrollListener(mOnScrollListener);
+        if (view instanceof RecyclerView) {
+            RecyclerView recyclerView = (RecyclerView) view;
+            recyclerView.removeOnScrollListener(mOnScrollListener);
+            recyclerView.addOnScrollListener(mOnScrollListener);
+        } else {
+            throw new IllegalArgumentException("View is not RecyclerView");
+        }
     }
 
     private class RecyclerViewOnScrollListener extends RecyclerView.OnScrollListener {

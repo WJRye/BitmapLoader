@@ -18,9 +18,14 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private String[] mTitles;
     public static final String TYPE = "type";
     public static final String TITLE = "title";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+            getSupportActionBar().setHomeButtonEnabled(false);
+        }
     }
 
     @Override
@@ -52,8 +57,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     public void onClick(View v) {
         String tag = (String) v.getTag();
         if (tag != null) {
-            for(String string:mTitles){
-                if(tag.equals(string)){
+            for (String string : mTitles) {
+                if (tag.equals(string)) {
                     String[] array = string.split(",");
                     Intent intent = new Intent(array[2]);
                     intent.putExtra(TYPE, Integer.parseInt(array[0]));

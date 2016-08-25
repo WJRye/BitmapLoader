@@ -15,8 +15,8 @@ import com.wj.bitmaploader.utils.DisplayShapeUtil;
 /**
  * 该类主要用作于加载图片
  */
-public class AsyncTaskHelper extends AsyncTask<LruCache<String, Bitmap>, Void, Bitmap> {
-    private int KEY = (int) System.currentTimeMillis();
+public final class AsyncTaskHelper extends AsyncTask<LruCache<String, Bitmap>, Void, Bitmap> {
+    private final int KEY = (int) System.currentTimeMillis();
     private boolean error = false;
     private ImageView imageView;
     private DisplayBitmapOptions options;

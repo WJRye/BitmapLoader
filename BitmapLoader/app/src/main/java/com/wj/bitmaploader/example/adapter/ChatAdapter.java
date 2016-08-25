@@ -62,13 +62,13 @@ public class ChatAdapter extends RecyclerView.Adapter {
         if (position % 2 == 0) {
             ViewCacheLeft viewCacheLeft = (ViewCacheLeft) viewHolder;
             DisplayBitmapOptions dbo = new DisplayBitmapOptions.Builder().
-                    path(mUris.get(position)).width(mWidth).height(mHeight).shape(new ChatShape(ChatShape.LEFT, 20)).build();
+                    path(mUris.get(position)).width(mWidth).height(mHeight).shape(new ChatShape(ChatShape.LEFT, 10)).build();
             viewCacheLeft.options = dbo;
             mLoader.displayBitmap(viewCacheLeft);
         } else {
             ViewCacheRight viewCacheRight = (ViewCacheRight) viewHolder;
             DisplayBitmapOptions dbo = new DisplayBitmapOptions.Builder().
-                    path(mUris.get(position)).width(mWidth).height(mHeight).shape(new ChatShape(ChatShape.RIGHT, 20)).build();
+                    path(mUris.get(position)).width(mWidth).height(mHeight).shape(new ChatShape(ChatShape.RIGHT, 10)).build();
             viewCacheRight.options = dbo;
             mLoader.displayBitmap(viewCacheRight);
         }

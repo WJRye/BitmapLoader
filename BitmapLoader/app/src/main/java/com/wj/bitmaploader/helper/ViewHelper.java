@@ -4,6 +4,7 @@ package com.wj.bitmaploader.helper;/**
 
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
+import android.support.v4.graphics.BitmapCompat;
 import android.support.v4.util.LruCache;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -46,7 +47,7 @@ public abstract class ViewHelper {
         mLruCache = new LruCache<String, Bitmap>((int) Runtime.getRuntime().maxMemory() / 8) {
             @Override
             protected int sizeOf(String key, Bitmap value) {
-                return value.getByteCount();
+                return BitmapCompat.getAllocationByteCount(value);
             }
         };
         mAsyncTaskHelpers = new HashSet<>();
@@ -89,7 +90,7 @@ public abstract class ViewHelper {
             if (mIsIdle) {
                 //停止滑动时，开始加载图片
                 AsyncTaskHelper helper = new AsyncTaskHelper(imageView, options, listener);
-                helper.executeOnExecutor(Executors.newCachedThreadPool(), mLruCache);
+                helper.executeOnExecutor(Executors.newFixedThreadPool(3), mLruCache);
                 mAsyncTaskHelpers.add(helper);
             }
         } else {
@@ -101,7 +102,7 @@ public abstract class ViewHelper {
      * @param imageView
      * @param options
      */
-    private final void setImageOnLoading(ImageView imageView, DisplayBitmapOptions options) {
+    private void setImageOnLoading(ImageView imageView, DisplayBitmapOptions options) {
         if (mLoadingBitmap == null) {
             if (options.getImageOnLoading() <= 0) {
                 imageView.setImageResource(0);

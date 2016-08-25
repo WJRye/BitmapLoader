@@ -338,8 +338,6 @@ public final class BitmapUtil {
         if (inSampleSize <= 1) inSampleSize = 1;
         opts.inSampleSize = inSampleSize;
         opts.inPreferredConfig = Config.RGB_565;
-        opts.inPurgeable = true;
-        opts.inInputShareable = true;
         opts.inTargetDensity = Resources.getSystem().getDisplayMetrics().densityDpi;
         opts.inScaled = true;
         opts.inTempStorage = new byte[16 * 1024];
